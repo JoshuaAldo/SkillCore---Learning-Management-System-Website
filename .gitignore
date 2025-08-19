@@ -1,0 +1,16 @@
+# Node modules
+be-lms/node_modules/
+fe-lms/node_modules/
+
+# Build
+fe-lms/dist/
+fe-lms/build/
+
+# Logs
+*.log
+
+# Environment variables
+be-lms/.env
+fe-lms/.env
+.env
+.env.local
