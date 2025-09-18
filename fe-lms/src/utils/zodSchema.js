@@ -10,6 +10,10 @@ export const signUpSchema = z.object({
   password: z.string().min(5),
 });
 
+export const forgotPassSchema = z.object({
+  email: z.string().email(),
+});
+
 export const signInSchema = signUpSchema.omit({ name: true });
 
 export const createCourseSchema = z.object({

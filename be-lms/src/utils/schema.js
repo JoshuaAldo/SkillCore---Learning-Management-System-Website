@@ -42,3 +42,12 @@ export const mutateUpdateStudentSchema = z.object({
 export const addStudentCourseSchema = z.object({
   studentId: z.string().min(5),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(5),
+});

@@ -5,3 +5,6 @@ export const postSignUp = async (data) =>
 
 export const postSignin = async (data) =>
   apiInstance.post("/sign-in", data).then((res) => res.data);
+
+export const postForgotPassword = async (data) =>
+  apiInstance.post("/forgot-password", data).then((res) => res.data);

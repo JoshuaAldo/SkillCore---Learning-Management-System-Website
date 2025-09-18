@@ -9,8 +9,7 @@ function App() {
   const notify = () => toast("Wow so easy!");
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />;
-      <button onClick={notify}>Notify!</button>
+      <RouterProvider router={router} />
       <ToastContainer />
     </QueryClientProvider>
   );

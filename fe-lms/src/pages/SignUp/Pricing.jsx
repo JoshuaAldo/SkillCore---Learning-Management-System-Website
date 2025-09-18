@@ -3,11 +3,23 @@ import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { postSignUp } from "../../services/authService";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.jsx";
+import { Label } from "@/components/ui/label.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { Input } from "@/components/ui/input.jsx";
+import { Loader2 } from "lucide-react";
 
 export default function Pricing({ data }) {
   console.log(data);
 
-  const { isLoading, mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: () => postSignUp(data),
   });
 
@@ -24,14 +36,7 @@ export default function Pricing({ data }) {
     }
   };
   return (
-    <div className="relative flex flex-col flex-1 h-screen">
-      <div className="fixed w-full h-full bg-[#0a0f35] -z-10">
-        <img
-          src="/assets/images/backgrounds/background-glow.png"
-          className="absolute bottom-0 transform -translate-x-1/2 left-1/2"
-          alt=""
-        />
-      </div>
+    <div className="relative flex flex-col flex-1 h-full bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225]">
       <nav className="flex items-center justify-between p-[30px]">
         <Navbar />
         <div className="flex items-center gap-3">
@@ -57,140 +62,63 @@ export default function Pricing({ data }) {
           We delivery robust features to anyone unconditionally.
         </p>
       </header>
-      <div className="grid grid-cols-2 gap-[30px] max-w-[840px] mx-auto mt-[60px] pb-4">
-        <div className="card flex flex-col h-fit rounded-[20px] border border-[#262A56] p-[30px] gap-[30px] bg-[#080A2A]">
-          <img
-            src="/assets/images/icons/note-favorite-white.svg"
-            className="w-[60px] h-[60px]"
-            alt="icon"
-          />
-          <div>
-            <p className="font-extrabold text-[46px] leading-[69px] text-white">
-              Rp 80.000
-            </p>
-            <p className="text-[#6B6C7F] mt-[6px]">Billed every single month</p>
-          </div>
-          <hr className="border-[#262A56]" />
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                Access gigantic features company
-              </p>
+      <div className="grid gap-8 max-w-full mx-auto mt-16 pb-4">
+        <Card className="flex flex-col rounded-2xl bg-black/20 border border-white/20 backdrop-blur-lg shadow-xl dark:bg-black/40 p-8 gap-8 ">
+          {/* Header */}
+          <CardHeader className="space-y-4">
+            <img
+              src="/assets/images/icons/note-favorite-white.svg"
+              className="w-14 h-14"
+              alt="icon"
+            />
+            <div>
+              <CardTitle className="text-4xl font-extrabold text-white">
+                Rp 280.000
+              </CardTitle>
+              <CardDescription className="text-gray-400 mt-2">
+                Billed every single month
+              </CardDescription>
             </div>
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                Students analytics and export
-              </p>
-            </div>
-          </div>
-          <hr className="border-[#262A56]" />
-          <p className="text-[#FF435A]">
-            This plan is not available at this moment in your country, try again
-            later.
-          </p>
-          <div className="flex flex-col gap-3">
-            <Link to="#">
-              <div className="flex items-center justify-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
-                <span className="font-semibold text-white">
-                  Contact Our Sales
-                </span>
+          </CardHeader>
+
+          <CardContent className="flex flex-col gap-5">
+            {[
+              "Access gigantic features company",
+              "Students analytics and export",
+              "Life support 24/7 maintenances",
+              "Export and analyze data real time",
+              "More big features coming soon",
+            ].map((feature, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <img
+                  src="/assets/images/icons/tick-circle-white.svg"
+                  className="w-6 h-6 shrink-0"
+                  alt="tick"
+                />
+                <p className="font-semibold text-white">{feature}</p>
               </div>
-            </Link>
-          </div>
-        </div>
-        <div className="card flex flex-col h-fit rounded-[20px] border border-[#262A56] p-[30px] gap-[30px] bg-[#080A2A]">
-          <img
-            src="/assets/images/icons/note-favorite-white.svg"
-            className="w-[60px] h-[60px]"
-            alt="icon"
-          />
-          <div>
-            <p className="font-extrabold text-[46px] leading-[69px] text-white">
-              Rp 280.000
-            </p>
-            <p className="text-[#6B6C7F] mt-[6px]">Billed every single month</p>
-          </div>
-          <hr className="border-[#262A56]" />
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                Access gigantic features company
-              </p>
-            </div>
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                Students analytics and export
-              </p>
-            </div>
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                Life support 24/7 maintenances
-              </p>
-            </div>
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                Export and analyze data real time
-              </p>
-            </div>
-            <div className="flex items-center gap-[6px]">
-              <img
-                src="/assets/images/icons/tick-circle-white.svg"
-                className="flex shrink-0 w-6 h-6"
-                alt="icon"
-              />
-              <p className="font-semibold text-white">
-                More big features coming soon
-              </p>
-            </div>
-          </div>
-          <hr className="border-[#262A56]" />
-          <div className="flex flex-col gap-3">
-            <button type="button" onClick={submitData} disabled={isLoading}>
-              <div className="flex items-center justify-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#662FFF] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]">
-                <span className="font-semibold text-white">
-                  Choose This Plan
-                </span>
-              </div>
-            </button>
-            <Link to="#">
-              <div className="flex items-center justify-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
-                <span className="font-semibold text-white">
-                  Contact Our Sales
-                </span>
-              </div>
-            </Link>
-          </div>
-        </div>
+            ))}
+          </CardContent>
+
+          {/* Footer with buttons */}
+          <CardFooter className="flex flex-col gap-3">
+            <Button
+              type="button"
+              onClick={submitData}
+              disabled={isPending}
+              className="w-full rounded-full bg-[#662FFF] border border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset] hover:bg-[#5620d1]"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Choose This Plan"
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

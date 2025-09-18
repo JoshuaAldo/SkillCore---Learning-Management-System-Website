@@ -30,6 +30,7 @@ import {
 import StudentCourseList from "../pages/Manager/student-course/StudentCourseList";
 import StudentForm from "../pages/Manager/student-course/StudentForm";
 import { getOverviews } from "../services/overviewService";
+import ForgotPasswordPage from "../pages/ForgotPassword/ForgotPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -232,6 +233,14 @@ const router = createBrowserRouter([
       }
       return true;
     },
+  },
+  {
+    path: "/manager/forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "/student/forgot-password",
+    element: <ForgotPasswordPage type="student" />,
   },
 ]);
 
