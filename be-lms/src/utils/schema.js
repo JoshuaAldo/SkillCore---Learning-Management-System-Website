@@ -36,7 +36,7 @@ export const mutateStudentSchema = z.object({
 export const mutateUpdateStudentSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
-  password: z.string().min(5).optional().or(z.literal(undefined)), // Explicitly allow undefined
+  password: z.string().min(5).optional().or(z.literal(undefined)),
 });
 
 export const addStudentCourseSchema = z.object({

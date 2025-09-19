@@ -120,7 +120,6 @@ export const portCourse = async (req, res) => {
 
     await course.save();
 
-    //update category
     await categoryModel.findByIdAndUpdate(
       category._id,
       {
@@ -131,7 +130,6 @@ export const portCourse = async (req, res) => {
       { new: true }
     );
 
-    //update user
     await userModel.findByIdAndUpdate(
       req.user?._id,
       {
@@ -172,9 +170,8 @@ export const updateCourse = async (req, res) => {
     const oldCourse = await courseModel.findById(courseId);
     const imageURL = "public/uploads/courses/";
     if (!oldCourse) {
-      // Add a check if the course itself exists
       if (req?.file?.path && fs.existsSync(req?.file?.path)) {
-        fs.unlinkSync(req?.file?.path); // Delete the newly uploaded file if course not found
+        fs.unlinkSync(req?.file?.path);
       }
       return res.status(404).json({
         message: "Course not found",
@@ -183,21 +180,20 @@ export const updateCourse = async (req, res) => {
 
     if (!category) {
       if (req?.file?.path && fs.existsSync(req?.file?.path)) {
-        fs.unlinkSync(req?.file?.path); // Delete the newly uploaded file if category not found
+        fs.unlinkSync(req?.file?.path);
       }
       return res.status(400).json({
         message: "Category Id not found",
       });
     }
 
-    // Check if a new file was uploaded AND if the old course had a thumbnail
     if (req.file && oldCourse.thumbnail) {
       const oldThumbnailPath = path.join(
         dirname,
         imageURL,
         oldCourse.thumbnail
       );
-      fs.unlinkSync(oldThumbnailPath); // Delete the old thumbnail file
+      fs.unlinkSync(oldThumbnailPath);
     }
 
     await courseModel.findByIdAndUpdate(courseId, {

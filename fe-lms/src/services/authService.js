@@ -8,3 +8,6 @@ export const postSignin = async (data) =>
 
 export const postForgotPassword = async (data) =>
   apiInstance.post("/forgot-password", data).then((res) => res.data);
+
+export const postResetPassword = async (data) =>
+  apiInstance.post("/reset-password", data).then((res) => res.data);

@@ -14,6 +14,11 @@ export const forgotPassSchema = z.object({
   email: z.string().email(),
 });
 
+export const resetPasswordSchema = z.object({
+  token: z.string().min(5),
+  newPassword: z.string().min(5),
+});
+
 export const signInSchema = signUpSchema.omit({ name: true });
 
 export const createCourseSchema = z.object({

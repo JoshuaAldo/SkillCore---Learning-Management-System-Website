@@ -22,15 +22,23 @@ const userModel = new mongoose.Schema({
     enum: ["manager", "student"],
     default: "manager",
   },
+  resetPasswordToken: {
+    type: String,
+    required: false,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    required: false,
+  },
   courses: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Course", // reference to the Course model
+      ref: "Course",
     },
   ],
   manager: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // reference to the Course model
+    ref: "User",
   },
 });
 

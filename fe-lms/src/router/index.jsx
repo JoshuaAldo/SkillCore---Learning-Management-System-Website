@@ -31,6 +31,7 @@ import StudentCourseList from "../pages/Manager/student-course/StudentCourseList
 import StudentForm from "../pages/Manager/student-course/StudentForm";
 import { getOverviews } from "../services/overviewService";
 import ForgotPasswordPage from "../pages/ForgotPassword/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -241,6 +242,10 @@ const router = createBrowserRouter([
   {
     path: "/student/forgot-password",
     element: <ForgotPasswordPage type="student" />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
   },
 ]);
 

@@ -92,7 +92,6 @@ export const updateStudent = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
 
-    // Clean body - convert empty string to undefined for password
     const cleanedBody = {
       ...body,
       password: body.password === "" ? undefined : body.password,
@@ -107,7 +106,6 @@ export const updateStudent = async (req, res) => {
         fs.unlinkSync(req?.file?.path);
       }
       return res.status(400).json({
-        // Changed to 400 for validation error
         message: "Error Validation",
         data: null,
         errors: errorMessages,
@@ -126,23 +124,19 @@ export const updateStudent = async (req, res) => {
 
     const imageURL = "public/uploads/students/";
 
-    // FIXED: Proper password handling
     let hashPassword;
     if (
       parse.data.password !== undefined &&
       parse.data.password !== null &&
       parse.data.password.trim() !== ""
     ) {
-      // Only hash if password is provided and not empty
       hashPassword = bcrypt.hashSync(parse.data.password, 12);
       console.log("Password will be updated with new hash");
     } else {
-      // Keep existing password
       hashPassword = student.password;
       console.log("Password will remain unchanged");
     }
 
-    // Debug logging
     console.log("Original password from body:", body.password);
     console.log("Cleaned password:", cleanedBody.password);
     console.log("Parsed password:", parse.data.password);
@@ -153,7 +147,6 @@ export const updateStudent = async (req, res) => {
         parse.data.password.trim() !== ""
     );
 
-    // Handle old photo deletion
     if (req.file && student.photo) {
       const oldStudentPhoto = path.join(dirname, imageURL, student.photo);
       if (fs.existsSync(oldStudentPhoto)) {
@@ -161,7 +154,6 @@ export const updateStudent = async (req, res) => {
       }
     }
 
-    // Update student
     await userModel.findByIdAndUpdate(id, {
       name: parse.data.name,
       email: parse.data.email,
@@ -174,7 +166,6 @@ export const updateStudent = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    // Clean up uploaded file on error
     if (req?.file?.path && fs.existsSync(req?.file?.path)) {
       fs.unlinkSync(req?.file?.path);
     }

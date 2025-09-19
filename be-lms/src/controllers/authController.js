@@ -3,25 +3,87 @@ import userModel from "../models/userModel.js";
 import transactionModel from "../models/transactionModel.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 export const signUpAction = async (req, res) => {
   const midtransUrl = process.env.MIDTRANS_URL;
   const authString = process.env.MIDTRANS_AUTH_STRING;
   const host = process.env.APP_FE_URL;
   try {
-    const body = req.body; //name, email, password
+    const body = req.body;
+
+    let user = await userModel.findOne({ email: body.email });
+    if (user) {
+      const existingSuccess = await transactionModel.findOne({
+        user: user._id,
+        status: "success",
+      });
+
+      if (existingSuccess) {
+        return res.status(400).json({
+          message: "Email already registered and active. Please sign in.",
+        });
+      }
+
+      let transaction = await transactionModel.findOne({
+        user: user._id,
+        status: "pending",
+      });
+
+      if (transaction) {
+        await transactionModel.deleteOne({ _id: transaction._id });
+      }
+
+      transaction = new transactionModel({
+        user: user._id,
+        price: 280000,
+      });
+      await transaction.save();
+
+      const midtrans = await fetch(midtransUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          transaction_details: {
+            order_id: transaction._id.toString(),
+            gross_amount: transaction.price,
+          },
+          credit_card: {
+            secure: true,
+          },
+          customer_details: {
+            email: user.email,
+          },
+          callbacks: { finish: `${host}/success-checkout` },
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${authString}`,
+        },
+      });
+
+      const resMidtrans = await midtrans.json();
+
+      sendPaymentEmail(user.email, resMidtrans.redirect_url).catch((err) => {
+        console.log("Send email error:", err);
+      });
+
+      return res.json({
+        message: "Payment link sent to your email.",
+        data: {
+          midtrans_payment_url: resMidtrans.redirect_url,
+        },
+      });
+    }
 
     const hashPassword = bcrypt.hashSync(body.password, 12);
 
-    const user = new userModel({
+    user = new userModel({
       name: body.name,
       email: body.email,
       photo: "default.png",
       password: hashPassword,
       role: "manager",
     });
-
-    //action Payment Gateway midtrans
 
     const transaction = new transactionModel({
       user: user._id,
@@ -48,25 +110,62 @@ export const signUpAction = async (req, res) => {
         Authorization: `Basic ${authString}`,
       },
     });
-
     const resMidtrans = await midtrans.json();
 
     await user.save();
     await transaction.save();
 
-    return res.json({
-      message: "Sign Up Success",
+    res.json({
+      message: "Sign Up Success. Payment link sent to your email.",
       data: {
         midtrans_payment_url: resMidtrans.redirect_url,
       },
     });
+
+    sendPaymentEmail(user.email, resMidtrans.redirect_url).catch((err) => {
+      console.log("Send email error:", err);
+    });
+
+    return;
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Internal Server Error",
     });
   }
 };
+
+async function sendPaymentEmail(email, paymentUrl) {
+  const appName = "SkillCore";
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const emailBody = `<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+      <h2 style="text-align: center; color: #0056b3;">Complete Your Registration</h2>
+      <p>Hello,</p>
+      <p>Thank you for registering at ${appName}. Please complete your payment by clicking the button below:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${paymentUrl}" style="background-color: #007BFF; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">Pay Now</a>
+      </div>
+      <p>If you did not register, please ignore this email.</p>
+      <p>Thank you,<br/>The ${appName} Team</p>
+      <hr style="border: none; border-top: 1px solid #eee; margin-top: 20px;" />
+      <p style="font-size: 12px; color: #888; text-align: center;">If you're having trouble clicking the button, copy and paste this URL into your browser:<br/><a href="${paymentUrl}" style="color: #007BFF;">${paymentUrl}</a></p>
+    </div>
+  </div>`;
+
+  await transporter.sendMail({
+    from: `"${appName}" <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: "Complete Your Registration - Payment Link",
+    html: emailBody,
+  });
+}
 
 export const signInAction = async (req, res) => {
   try {
@@ -94,7 +193,6 @@ export const signInAction = async (req, res) => {
       user: existingUser._id,
       status: "success",
     });
-    console.log(existingUser._id);
 
     if (existingUser.role != "student" && !isValidUser) {
       return res.status(400).json({ message: "User not verified" });
@@ -129,7 +227,6 @@ export const signInAction = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -142,14 +239,25 @@ export const forgotPasswordAction = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Generate reset token (valid 1 hour)
-    const resetToken = jwt.sign(
-      { id: user._id.toString() },
-      process.env.SECRET_KEY_JWT,
-      { expiresIn: "1h" }
-    );
+    const isValidUser = await transactionModel.findOne({
+      user: user._id,
+      status: "success",
+    });
 
-    // Send email with reset link
+    if (!isValidUser && user.role !== "student") {
+      return res.status(400).json({ message: "User not verified" });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordToken = resetTokenHash;
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+    await user.save();
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -159,7 +267,7 @@ export const forgotPasswordAction = async (req, res) => {
     });
 
     const resetLink = `${process.env.APP_FE_URL}/reset-password?token=${resetToken}`;
-    const appName = "SkillCore"; // <-- Add your app's name here
+    const appName = "SkillCore";
 
     const emailBody = `<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
   <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
@@ -178,7 +286,7 @@ export const forgotPasswordAction = async (req, res) => {
 </div>`;
 
     await transporter.sendMail({
-      from: `"${appName}" <${process.env.SMTP_USER}>`, // Recommended: Use app name as sender
+      from: `"${appName}" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Your Password Reset Link",
       html: emailBody,
@@ -186,7 +294,6 @@ export const forgotPasswordAction = async (req, res) => {
 
     return res.json({ message: "Reset password link sent to email" });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -194,17 +301,33 @@ export const forgotPasswordAction = async (req, res) => {
 export const resetPasswordAction = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
-    const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT);
-    const userId = decoded.id;
-    const user = await userModel.findById(userId);
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: "Invalid Request" });
+    }
+
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await userModel.findOne({
+      resetPasswordToken: resetTokenHash,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
     user.password = bcrypt.hashSync(newPassword, 12);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
     await user.save();
-    return res.json({ message: "Password has been reset successfully" });
+
+    return res.json({
+      message: "Password has been reset successfully",
+      role: user.role,
+    });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ message: "Invalid or expired token" });
   }
 };

@@ -1,12 +1,10 @@
-import React, { useState } from "react";
-import { postForgotPassword } from "../../services/authService";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPassSchema } from "../../utils/zodSchema";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import Navbar from "../../components/Navbar";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import {
   Card,
   CardContent,
@@ -19,19 +17,28 @@ import { Label } from "@/components/ui/label.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Input } from "@/components/ui/input.jsx";
 import { Loader2 } from "lucide-react";
+import { resetPasswordSchema } from "@/utils/zodSchema";
+import { postResetPassword } from "@/services/authService";
 
-function ForgotPasswordPage({ type = "manager" }) {
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+function ResetPasswordPage() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(forgotPassSchema),
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: (data) => postForgotPassword(data),
+    mutationFn: (data) => postResetPassword(data),
   });
+
+  const query = useQuery();
+  const token = query.get("token");
 
   const navigate = useNavigate();
   const onSubmit = async (data) => {
@@ -40,7 +47,7 @@ function ForgotPasswordPage({ type = "manager" }) {
         return;
       }
       const response = await mutateAsync(data);
-      toast.success("Email has been sent! Please check your email.", {
+      toast.success("Password reset successful. Please login.", {
         position: "top-center",
         autoClose: 4000,
         hideProgressBar: false,
@@ -49,16 +56,14 @@ function ForgotPasswordPage({ type = "manager" }) {
         draggable: true,
         progress: undefined,
         theme: "dark",
-        className: "bg-[#10131a]",
       });
-      if (type === "manager") {
+      if (response.role === "manager") {
         navigate("/manager/sign-in");
-      } else if (type === "student") {
+      } else {
         navigate("/student/sign-in");
       }
     } catch (error) {
-      const errMsg = error.response.data.message;
-      toast.error(errMsg, {
+      toast.error(error.response.data.message, {
         position: "top-center",
         autoClose: 4000,
         hideProgressBar: false,
@@ -67,31 +72,24 @@ function ForgotPasswordPage({ type = "manager" }) {
         draggable: true,
         progress: undefined,
         theme: "dark",
-        className: "bg-[#10131a]",
+        className: "bg-[#110225]",
       });
     }
   };
-  const location = useLocation();
+
+  if (!token) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="text-red-500">Invalid or missing token.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex flex-col flex-1 h-screen">
       <div className="fixed w-full h-full bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225] -z-10"></div>
       <nav className="flex items-center justify-between p-[30px]">
         <Navbar />
-        <div className="flex items-center gap-3">
-          <Link
-            to={type === "manager" ? "/manager/sign-in" : "/student/sign-in"}
-          >
-            <div
-              className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
-                location.pathname.includes("/sign-in")
-                  ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
-                  : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
-              }`}
-            >
-              <span className="font-semibold text-white">Sign In</span>
-            </div>
-          </Link>
-        </div>
       </nav>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -100,31 +98,31 @@ function ForgotPasswordPage({ type = "manager" }) {
         <Card className="relative z-10 w-auto rounded-2xl  bg-white/10 border border-white/20 backdrop-blur-lg shadow-xl dark:bg-black/40 ">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-white">
-              Forgot Password
+              Reset Password
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Reset your password
+              Enter your new password
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">
-                Email
+              <Label htmlFor="newPassword" className="text-white">
+                New Password
               </Label>
               <Input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Write your email address"
+                type="password"
+                id="newPassword"
+                placeholder="New password"
                 className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                {...register("email")}
+                {...register("newPassword")}
               />
-              {errors.email?.message && (
+              {errors.newPassword?.message && (
                 <p className="text-red-500 text-xs mt-[-20px] text-center">
-                  {errors.email?.message}
+                  {errors.newPassword?.message}
                 </p>
               )}
             </div>
+            <input type="hidden" value={token} {...register("token")} />
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
             <Button
@@ -138,7 +136,7 @@ function ForgotPasswordPage({ type = "manager" }) {
                   Loading...
                 </>
               ) : (
-                "Send Reset Password Link"
+                "Reset Password"
               )}
             </Button>
           </CardFooter>
@@ -148,4 +146,4 @@ function ForgotPasswordPage({ type = "manager" }) {
   );
 }
 
-export default ForgotPasswordPage;
+export default ResetPasswordPage;

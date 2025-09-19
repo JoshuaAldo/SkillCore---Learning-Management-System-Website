@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { useForm } from "react-hook-form";
@@ -20,6 +20,7 @@ import {
 import { Label } from "@/components/ui/label.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Input } from "@/components/ui/input.jsx";
+import { Eye, EyeOff } from "lucide-react";
 
 function SignInPage({ type = "manager" }) {
   const {
@@ -54,6 +55,7 @@ function SignInPage({ type = "manager" }) {
             draggable: true,
             progress: undefined,
             theme: "dark",
+            className: "bg-[#10131a]",
           });
         }
       } else if (type === "student") {
@@ -70,6 +72,7 @@ function SignInPage({ type = "manager" }) {
             draggable: true,
             progress: undefined,
             theme: "dark",
+            className: "bg-[#10131a]",
           });
         }
       }
@@ -83,11 +86,13 @@ function SignInPage({ type = "manager" }) {
         draggable: true,
         progress: undefined,
         theme: "dark",
+        className: "bg-[#10131a]",
       });
     }
   };
   const location = useLocation();
 
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="relative flex flex-col min-h-screen overflow-hidden bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225]">
       <div className="absolute -top-40 -left-40 h-96 w-96 bg-indigo-800/30 rounded-full blur-3xl pointer-events-none" />
@@ -99,7 +104,7 @@ function SignInPage({ type = "manager" }) {
             <div
               className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
                 location.pathname.includes("/sign-in")
-                  ? "bg-[#420ecf] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                  ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
                   : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
               }`}
             >
@@ -111,7 +116,7 @@ function SignInPage({ type = "manager" }) {
               to="/manager/sign-up"
               className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
                 location.pathname.includes("/sign-up")
-                  ? "bg-[#420ecf] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                  ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
                   : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
               }`}
             >
@@ -156,14 +161,29 @@ function SignInPage({ type = "manager" }) {
               <Label htmlFor="password" className="text-white">
                 Password
               </Label>
-              <Input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Type your secure password"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  placeholder="Type your secure password"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                  {...register("password")}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:bg-white/0"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </Button>
+              </div>
               {errors.password?.message && (
                 <p className="text-red-500 text-xs mt-[10px] text-center">
                   {errors.password?.message}

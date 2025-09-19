@@ -11,14 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.jsx";
-import { Label } from "@/components/ui/label.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import { Input } from "@/components/ui/input.jsx";
 import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
 
-export default function Pricing({ data }) {
-  console.log(data);
-
+export default function Pricing({ data, onChangeMode }) {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: () => postSignUp(data),
   });
@@ -29,27 +26,50 @@ export default function Pricing({ data }) {
         return;
       }
       const response = await mutateAsync();
-
       window.location.replace(response.data.midtrans_payment_url);
     } catch (error) {
       console.log(error);
+      const errMsg = error.response.data.message;
+      toast.error(errMsg, {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        className: "bg-[#10131a]",
+      });
     }
   };
   return (
-    <div className="relative flex flex-col flex-1 h-full bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225]">
+    <div className="relative flex flex-col flex-1 min-h-screen bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225]">
       <nav className="flex items-center justify-between p-[30px]">
         <Navbar />
         <div className="flex items-center gap-3">
           <Link to="/manager/sign-in">
-            <div className="flex items-center gap-3 w-fit rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
+            <div
+              className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
+                location.pathname.includes("/sign-in")
+                  ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                  : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
+              }`}
+            >
               <span className="font-semibold text-white">My Dashboard</span>
             </div>
           </Link>
-          <Link to="#">
-            <div className="flex items-center gap-3 w-fit rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#662FFF] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]">
-              <span className="font-semibold text-white">Sign Up</span>
-            </div>
-          </Link>
+          <button
+            type="button"
+            onClick={() => onChangeMode && onChangeMode("AUTH")}
+            className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
+              location.pathname.includes("/sign-up")
+                ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
+            }`}
+          >
+            <span className="font-semibold text-white">Sign Up</span>
+          </button>
         </div>
       </nav>
       <header className="flex flex-col items-center gap-5 text-center mt-[50px]">

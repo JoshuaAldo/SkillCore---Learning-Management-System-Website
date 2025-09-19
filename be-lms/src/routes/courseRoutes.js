@@ -30,7 +30,6 @@ const upload = multer({
   fileFilter,
 });
 
-// Course API
 courseRoutes.get("/courses", verifyToken, getCourses);
 
 courseRoutes.get("/categories", verifyToken, getCategories);
@@ -53,7 +52,6 @@ courseRoutes.put(
 
 courseRoutes.delete("/courses/:id", verifyToken, deleteCourse);
 
-// Detail Course Content
 courseRoutes.post(
   "/courses/contents",
   verifyToken,
