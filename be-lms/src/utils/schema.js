@@ -19,6 +19,10 @@ export const mutateCourseSchema = z.object({
   description: z.string().min(10),
 });
 
+export const mutateCategorySchema = z.object({
+  name: z.string().min(3),
+});
+
 export const mutateContentSchema = z.object({
   title: z.string().min(5),
   type: z.string(),

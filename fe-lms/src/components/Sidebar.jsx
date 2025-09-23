@@ -9,11 +9,9 @@ export default function Sidebar({ isAdmin = true }) {
     const baseClasses =
       "flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset]";
 
-    // Determine if the current path matches the link's path
-    // For overview, exact match. For others, startsWith to cover sub-routes.
     const isActive =
-      (path === "/manager" && currentPath === "/manager") || // Exact match for overview
-      (path === "/student" && currentPath === "/student") || // Exact match for student overview
+      (path === "/manager" && currentPath === "/manager") ||
+      (path === "/student" && currentPath === "/student") ||
       (path.startsWith("/manager/courses") &&
         currentPath.startsWith("/manager/courses")) ||
       (path.startsWith("/manager/students") &&
@@ -22,18 +20,16 @@ export default function Sidebar({ isAdmin = true }) {
         currentPath.startsWith("/student/detail-course"));
 
     if (isAdmin) {
-      // Admin specific active/inactive states
       return `${baseClasses} ${
         isActive
           ? "bg-[#662FFF] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
           : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
       }`;
     } else {
-      // Student specific active/inactive states (adjust as needed if student has different inactive styles)
       return `${baseClasses} ${
         isActive
           ? "bg-[#662FFF] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
-          : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]" // Or adjust for student inactive
+          : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
       }`;
     }
   };
@@ -53,8 +49,6 @@ export default function Sidebar({ isAdmin = true }) {
               <li>
                 <Link to="/manager">
                   <div className={getLinkClasses("/manager")}>
-                    {" "}
-                    {/* Use getLinkClasses */}
                     <img
                       src="/assets/images/icons/3dcube-white.svg"
                       className="w-6 h-6"

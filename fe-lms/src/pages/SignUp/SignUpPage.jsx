@@ -65,7 +65,7 @@ export default function SignUpPage() {
                 <div
                   className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
                     location.pathname.includes("/sign-up")
-                      ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                      ? "bg-[#420ecf]  shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
                       : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
                   }`}
                 >

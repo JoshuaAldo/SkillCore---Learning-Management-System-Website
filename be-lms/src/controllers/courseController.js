@@ -54,6 +54,53 @@ export const getCategories = async (req, res) => {
   }
 };
 
+export const postCategories = async (req, res) => {
+  try {
+    const { name } = req.body;
+    let category = await categoryModel.findOne({ name: name });
+
+    if (!name) {
+      return res.status(400).json({
+        message: "Category name is required",
+      });
+    }
+
+    if (category) {
+      return res.status(400).json({
+        message: "Category name already exists",
+      });
+    }
+
+    const newCategory = new categoryModel({
+      name,
+    });
+
+    // Simpan ke database
+    await newCategory.save();
+
+    return res.json({ message: "Category created successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateCategories = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, courses } = req.body;
+
+    const updatedCategory = await categoryModel.findByIdAndUpdate(
+      id,
+      { name, courses },
+      { new: true, runValidators: true } // return hasil terbaru + validasi
+    );
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,7 +131,7 @@ export const getCourseById = async (req, res) => {
   }
 };
 
-export const portCourse = async (req, res) => {
+export const postCourse = async (req, res) => {
   try {
     const body = req.body;
     const parse = mutateCourseSchema.safeParse(body);

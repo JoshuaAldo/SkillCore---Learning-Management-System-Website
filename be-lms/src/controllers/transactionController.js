@@ -7,7 +7,7 @@ export const paymentAction = async (req, res) => {
   try {
     const transaction = new transactionModel({
       user: user._id,
-      price: 250000,
+      price: 280000,
     });
 
     const midtrans = await fetch(midtransUrl, {

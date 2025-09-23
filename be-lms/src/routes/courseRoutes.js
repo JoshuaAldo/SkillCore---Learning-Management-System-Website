@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getCourses,
-  portCourse,
+  postCourse,
   updateCourse,
   deleteCourse,
   getCategories,
@@ -13,6 +13,7 @@ import {
   getStudentsByCourseId,
   postStudentToCourse,
   deleteStudentToCourse,
+  postCategories,
 } from "../controllers/courseController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { fileFilter, fileStorageCourse } from "../utils/multer.js";
@@ -20,6 +21,7 @@ import multer from "multer";
 import { validateRequest } from "../middlewares/validateRequest.js";
 import {
   addStudentCourseSchema,
+  mutateCategorySchema,
   mutateContentSchema,
 } from "../utils/schema.js";
 
@@ -34,13 +36,20 @@ courseRoutes.get("/courses", verifyToken, getCourses);
 
 courseRoutes.get("/categories", verifyToken, getCategories);
 
+courseRoutes.post(
+  "/categories",
+  verifyToken,
+  validateRequest(mutateCategorySchema),
+  postCategories
+);
+
 courseRoutes.get("/courses/:id", verifyToken, getCourseById);
 
 courseRoutes.post(
   "/courses",
   verifyToken,
   upload.single("thumbnail"),
-  portCourse
+  postCourse
 );
 
 courseRoutes.put(

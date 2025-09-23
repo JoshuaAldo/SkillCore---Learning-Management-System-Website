@@ -42,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/manager/sign-in",
-    element: <SignInPage />,
+    element: <SignInPage key="manager" />,
     loader: async () => {
       const session = secureLocalStorage.getItem(STORAGE_KEY);
 
@@ -225,7 +225,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/student/sign-in",
-    element: <SignInPage type="student" />,
+    element: <SignInPage key="student" type="student" />,
     loader: async () => {
       const session = secureLocalStorage.getItem(STORAGE_KEY);
 
