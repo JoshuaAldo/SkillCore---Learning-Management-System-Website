@@ -77,6 +77,7 @@ VITE_SECURE_LOCAL_STORAGE_HASH_KEY=localHashKey
 * 📚 Learning Content Viewer
 * 📬 Reset Password via Email (SMTP)
 * ⚙ Role-based Access
+* To try the register feature you can go sign-up and in the payment menu copy the payment link and paste it here : `https://simulator.sandbox.midtrans.com/`
 
 📌 Folder Structure
 ```/
