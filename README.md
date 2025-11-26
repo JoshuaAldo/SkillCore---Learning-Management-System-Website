@@ -1,4 +1,4 @@
-🧑‍🏫 SkillCore - Learning Management System (LMS)
+#🧑‍🏫 SkillCore - Learning Management System (LMS)
 
 SkillCore is a Learning Management System platform based on MERN Stack (MongoDB, Express.js, React.js, Node.js) that provides digital learning features such as:
 1. User Management (Student & Manager/Admin)
