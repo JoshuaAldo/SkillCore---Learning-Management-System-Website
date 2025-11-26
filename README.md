@@ -26,7 +26,7 @@ SkillCore is a Learning Management System platform based on MERN Stack (MongoDB,
 | Student | student1@gmail.com | Password1234 |
 | Manager | admin@gmail.com    | Password1234 |
 
-📦 Install & Run Locally
+📦 Install & Run Locally 
 1️⃣ Clone Project
 * `git clone https://github.com/JoshuaAldo/SkillCore---Learning-Management-System-Website.git`
 * `cd SkillCore---Learning-Management-System-Website`
