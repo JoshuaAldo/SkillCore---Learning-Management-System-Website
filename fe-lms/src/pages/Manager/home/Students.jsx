@@ -1,38 +1,44 @@
 import React from "react";
 import { useLoaderData } from "react-router-dom";
+import { Users } from "lucide-react";
 
 export default function Students() {
-  const overview = useLoaderData();
+  const data = useLoaderData();
   return (
-    <section
-      id="LatestStudents"
-      className="flex flex-col rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
-    >
-      <h2 className="font-extrabold text-[22px] leading-[33px]">
-        Latest Students
-      </h2>
-      {overview?.students.map((item) => (
-        <div key={item._id} className="card flex items-center gap-5">
-          <div className="flex shrink-0 w-20 h-20 rounded-[20px] bg-[#D9D9D9] overflow-hidden">
-            <img
-              src={item?.photo_url}
-              className="w-full h-full object-cover"
-              alt="thumbnail"
-            />
-          </div>
-          <div className="w-full">
-            <h3 className="font-bold text-xl leading-[30px] line-clamp-1">
-              {item.name}
-            </h3>
-            <div className="flex items-center gap-[6px] mt-[6px]">
-              <img src="/assets/images/icons/crown-purple.svg" alt="icon" />
-              <p className="text-[#838C9D]">
-                {item?.courses?.length} Course Joined
-              </p>
-            </div>
-          </div>
+    <section id="LatestStudents" className="lg:col-span-1">
+      <div className="stat-card h-full">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold">Latest Students</h2>
+          <Users size={20} className="text-primary" />
         </div>
-      ))}
+        <div className="space-y-4">
+          {data?.overviews?.students.map((item) => (
+            <div
+              key={item._id}
+              className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+            >
+              <div className="w-24 h-14 bg-gradient-secondary rounded-full flex items-center justify-center">
+                <img
+                  src={item?.photo_url}
+                  className="w-full h-full object-cover rounded-lg"
+                  alt="thumbnail"
+                />
+              </div>
+              <div className="w-full">
+                <h3 className="font-semibold text-md line-clamp-1">
+                  {item.name}
+                </h3>
+                <div className="flex items-center gap-[6px] mt-[6px] text-sm">
+                  <img src="/assets/images/icons/crown-purple.svg" alt="icon" />
+                  <p className="text-[#838C9D]">
+                    {item?.courses?.length} Course Joined
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

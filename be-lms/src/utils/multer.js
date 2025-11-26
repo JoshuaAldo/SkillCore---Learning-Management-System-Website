@@ -1,4 +1,6 @@
 import multer from "multer";
+import fs from "fs";
+import path from "path";
 
 export const fileStorageCourse = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -15,7 +17,8 @@ export const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/jpeg" ||
     file.mimetype === "image/jpg" ||
-    file.mimetype === "image/png"
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/webp"
   ) {
     cb(null, true);
   } else {
@@ -23,10 +26,16 @@ export const fileFilter = (req, file, cb) => {
   }
 };
 
-export const fileStorage = (path = "courses") =>
+export const fileStorage = (folderName = "courses") =>
   multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, `public/uploads/${path}`);
+      const uploadPath = path.join("public", "uploads", folderName);
+
+      if (!fs.existsSync(uploadPath)) {
+        fs.mkdirSync(uploadPath, { recursive: true });
+      }
+
+      cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
       const ext = file.originalname.split(".")[1];

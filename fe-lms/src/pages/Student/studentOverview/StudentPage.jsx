@@ -6,22 +6,29 @@ export default function StudentPage() {
   const courses = useLoaderData();
 
   return (
-    <section
-      id="LatestCourse"
-      className="flex flex-col rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
-    >
-      <h2 className="font-extrabold text-[22px] leading-[33px]">
-        Latest Courses
-      </h2>
-      {courses.map((item) => (
-        <CardCourse
-          key={item._id}
-          id={item._id}
-          imageUrl={item.thumbnail_url}
-          title={item.name}
-          category={item.category.name}
-        />
-      ))}
+    <section id="LatestCourse" className="p-6">
+      <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+        <div>
+          <h1 className="font-extrabold text-[28px] leading-[42px] text-white">
+            Latest Courses
+          </h1>
+        </div>
+      </header>
+
+      <section
+        id="CourseList"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        {courses.map((item) => (
+          <CardCourse
+            key={item._id}
+            id={item._id}
+            imageUrl={item.thumbnail_url}
+            title={item.name}
+            category={item.category.name}
+          />
+        ))}
+      </section>
     </section>
   );
 }

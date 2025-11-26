@@ -1,29 +1,35 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { FileText, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ContentText({ content, handleNext }) {
   return (
-    <>
-      <div className="flex flex-col gap-5 max-w-[800px] pb-[160px]">
-        <h1 className="font-bold text-[32px] leading-[48px]">
-          {content?.title}
-        </h1>
-        <article
-          id="Content-wrapper"
-          className="prose"
+    <div className="p-8">
+      <div className="max-w-screen mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <FileText className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">
+            {content?.title}
+          </h1>
+        </div>
+        <div
+          className="glass-card rounded-2xl p-8 prose prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: content?.text }}
-        ></article>
+        />
+        <div className="mt-8 flex justify-end">
+          <Button
+            variant="gradient"
+            size="lg"
+            className="w-full sm:w-auto bg-[#420ecf] hover:bg-indigo-600 shadow-[-10px_-6px_10px_0_#7F33FF_inset] text-sm sm:text-base rounded-lg flex items-center justify-center px-4 py-2 sm:px-6 sm:py-3 transition-all duration-300"
+            onClick={() => handleNext(content)}
+          >
+            <CheckCircle2 className="w-5 h-5 mr-2" />
+            Go to Next Content
+          </Button>
+        </div>
       </div>
-      <div className="fixed bottom-0 w-[calc(100%-400px)] h-[151px] flex items-end justify-end pb-5 bg-[linear-gradient(0deg,#FFFFFF_49.67%,rgba(255,255,255,0)_84.11%)]">
-        <button
-          type="button"
-          onClick={() => handleNext(content)}
-          className="w-fit rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
-        >
-          Mark as Completed
-        </button>
-      </div>
-    </>
+    </div>
   );
 }
 

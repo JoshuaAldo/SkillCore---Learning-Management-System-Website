@@ -3,6 +3,7 @@ import { Link, useLoaderData, useParams } from "react-router-dom";
 import ContentText from "./ContentText";
 import ContentVideo from "./ContentVideo";
 import Header from "../../../components/Header";
+import { ArrowLeft, Video, FileText } from "lucide-react";
 
 export default function ManageCoursePreviewPage({ isAdmin = true }) {
   const course = useLoaderData();
@@ -24,103 +25,120 @@ export default function ManageCoursePreviewPage({ isAdmin = true }) {
     }
   };
 
-  const getContentItemClasses = (item) => {
-    const baseClasses =
-      "flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset]";
-    const isActive = activeContent && activeContent._id === item._id; // Check if this item is the active one
+  const getClasses = (item, type) => {
+    let baseClasses;
+    const isActive = activeContent && activeContent._id === item._id;
 
-    return `${baseClasses} ${
-      isActive
-        ? "bg-[#662FFF] border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]" // Active styles
-        : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]" // Inactive styles
-    }`;
+    if (type === "button") {
+      baseClasses =
+        "w-full text-left p-4 rounded-xl transition-all duration-300";
+      return `${baseClasses} ${
+        isActive
+          ? "bg-primary/20 border border-primary/30" // Active styles
+          : "glass-card hover:bg-white/5" // Inactive styles
+      }`;
+    } else if (type === "contentItem") {
+      baseClasses =
+        "flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0";
+      return `${baseClasses} ${
+        isActive
+          ? "bg-primary/30" // Active styles
+          : "bg-white/5" // Inactive styles
+      }`;
+    } else if (type === "icon") {
+      baseClasses = "w-4 h-4";
+      return `${baseClasses} ${
+        isActive
+          ? "text-primary" // Active styles
+          : "text-muted-foreground" // Inactive styles
+      }`;
+    } else if (type === "header") {
+      baseClasses = "font-medium text-sm mb-1 line-clamp-2";
+      return `${baseClasses} ${
+        isActive
+          ? "text-primary" // Active styles
+          : "text-foreground" // Inactive styles
+      }`;
+    }
   };
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="sidebar-container fixed h-screen w-full max-w-[330px] bg-[#060A23] overflow-hidden flex flex-1">
-        <div className="scroll-container flex w-full overflow-y-scroll hide-scrollbar">
-          <nav className="flex flex-col w-full h-fit p-[30px] gap-[30px] z-10">
-            <Link
-              to={isAdmin ? `/manager/courses/${id}` : "/student"}
-              className="font-semibold text-white hover:underline"
-            >
-              <div className="flex">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  id="back-arrow"
-                >
-                  <path fill="none" d="M0 0h24v24H0V0z"></path>
-                  <path
-                    fill="white"
-                    d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"
-                  ></path>
-                </svg>
-                <span>Back to Dashboard</span>
-              </div>
-            </Link>
-            <div className="flex flex-col gap-4">
-              <div className="flex shrink-0 w-[130px] h-[100px] rounded-[14px] bg-[#D9D9D9] overflow-hidden">
-                <img
-                  src="/assets/images/thumbnails/th-1.png"
-                  className="w-full h-full object-cover"
-                  alt="thumbnail"
-                />
-              </div>
-              <h2 className="font-bold text-xl leading-[34px] text-white">
-                {course?.name}
-              </h2>
-            </div>
-            <ul className="flex flex-col gap-4">
-              {course?.details?.map((item) => (
-                <li key={item._id}>
-                  <button
-                    type="button"
-                    className="w-full text-left"
-                    onClick={() => handleChangeContent(item)}
-                  >
-                    <div className={getContentItemClasses(item)}>
-                      <img
-                        src={`/assets/images/icons/${
-                          item.type === "text"
-                            ? "note-white.svg"
-                            : "video-play-white.svg"
-                        }`}
-                        className="w-6 h-6"
-                        alt="icon"
-                      />
-                      <span className="w-full font-semibold text-white line-clamp-1 transition-all duration-300 hover:line-clamp-none">
-                        {item.title}
-                      </span>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
+    <div className="min-h-screen gradient-background flex">
+      <aside className="w-80 glass-card border-r border-border/20 flex flex-col px-2">
+        <div className="p-6 border-b border-border/20">
+          <Link
+            to={isAdmin ? `/manager/courses/${id}` : "/student"}
+            className="flex items-center gap-2 text-foreground hover:text-primary transition-colors mb-6"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Dashboard</span>
+          </Link>
+
+          <div className="glass-card rounded-xl overflow-hidden mb-4">
+            <img
+              src={course.thumbnail_url}
+              alt={course.name}
+              className="w-full aspect-video object-cover"
+            />
+          </div>
+
+          <h2 className="text-lg font-bold text-foreground mb-1">
+            {course.name}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {course.category.name}
+          </p>
         </div>
-        <img
-          src="/assets/images/backgrounds/sidebar-glow.png"
-          className="absolute object-contain object-bottom bottom-0"
-          alt="background"
-        />
+
+        <ul className="flex flex-col gap-4">
+          {course?.details?.map((item) => (
+            <li key={item._id}>
+              <button
+                type="button"
+                className={getClasses(item, "button")}
+                onClick={() => handleChangeContent(item)}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={getClasses(item, "contentItem")}>
+                    {item.type === "video" ? (
+                      <Video className={getClasses(item, "icon")} />
+                    ) : (
+                      <FileText className={getClasses(item, "icon")} />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={getClasses(item, "header")}>{item.title}</h3>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>{item.type} course</span>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </li>
+          ))}
+        </ul>
       </aside>
-      <main className="flex flex-col flex-1 gap-[30px] p-[30px] ml-[340px]">
+
+      <main className="flex-1 flex flex-col overflow-hidden">
         <Header isAdmin={isAdmin} />
-        <div className="relative flex flex-col gap-[26px]">
-          {activeContent?.type === "text" ? (
-            <ContentText
-              content={activeContent}
-              handleNext={handleNextContent}
-            />
+        <div className="flex-1 overflow-y-auto">
+          {activeContent ? (
+            activeContent.type === "text" ? (
+              <ContentText
+                content={activeContent}
+                handleNext={handleNextContent}
+              />
+            ) : (
+              <ContentVideo
+                content={activeContent}
+                handleNext={handleNextContent}
+              />
+            )
           ) : (
-            <ContentVideo
-              content={activeContent}
-              handleNext={handleNextContent}
-            />
+            <div className="text-white text-center py-10 bg-[#181A35] rounded-lg">
+              There is no content available for this course. Please Contact your
+              Manager.
+            </div>
           )}
         </div>
       </main>

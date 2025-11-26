@@ -5,7 +5,17 @@ import {
   STORAGE_KEY,
   STUDENT_SESSION,
 } from "../utils/const.js";
-import { useRouteLoaderData } from "react-router-dom";
+import { Link, useRouteLoaderData } from "react-router-dom";
+import { Search, User, LogOut, UserCircle, Upload } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header({ isAdmin = true }) {
   const session =
@@ -20,64 +30,80 @@ export default function Header({ isAdmin = true }) {
   };
 
   return (
-    <div id="TopBar" className="flex items-center justify-between gap-[30px]">
-      <form
-        action=""
-        className="flex items-center w-full max-w-[450px] rounded-full border border-[#CFDBEF] gap-3 px-5 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#662FFF]"
-      >
-        <input
-          type="text"
-          name="search"
-          id="search"
-          className="appearance-none outline-none w-full py-3 font-semibold placeholder:font-normal placeholder:text-[#838C9D]"
-          placeholder="Search course, student, other file..."
-        />
-        <img
-          src="/assets/images/icons/search-normal.svg"
-          className="w-6 h-6"
-          alt="icon"
-        />
-      </form>
-      <div className="relative flex items-center justify-end gap-[14px] group">
-        <div className="text-right">
-          <p className="font-semibold">{session?.name}</p>
-          <p className="text-sm leading-[21px] text-[#838C9D]">
-            {session?.role}
-          </p>
-        </div>
-        <button
-          type="button"
-          id="profileButton"
-          className="flex shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden"
-        >
-          <img
-            src={session.profileImg}
-            className="w-full h-full object-cover"
-            alt="profile photos"
+    <header className="glass-card p-4 backdrop-blur-xl">
+      <div id="TopBar" className="flex items-center justify-between">
+        <form action="" className="relative flex-1 max-w-md">
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/50"
+            size={20}
           />
-        </button>
-        <div
-          id="ProfileDropdown"
-          className="absolute top-full hidden group-hover:block z-30"
-        >
-          <ul className="flex flex-col w-[200px] rounded-[20px] border border-[#CFDBEF] p-5 gap-4 bg-white mt-4">
-            <li className="font-semibold">
-              <a href="#">My Account</a>
-            </li>
-            <li className="font-semibold">
-              <a href="#">Subscriptions</a>
-            </li>
-            <li className="font-semibold">
-              <a href="#">Settings</a>
-            </li>
-            <li className="font-semibold">
-              <button type="button" onClick={handleLogout}>
-                Logout
+          <Input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Search course, student, other file..."
+            className="pl-10 bg-white/3 focus:bg-white/8 transition-all duration-200 border-0"
+          />
+        </form>
+
+        <div className="flex items-center gap-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-foreground">
+                    {session?.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground/60">
+                    {session?.role}
+                  </p>
+                </div>
+                <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center shadow-glow">
+                  {session.profileImg?.includes("default.png") ? (
+                    <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center shadow-glow">
+                      <User size={20} className="text-white" />
+                    </div>
+                  ) : (
+                    <img
+                      src={session.profileImg}
+                      className="w-10 h-10 object-cover rounded-full shadow-glow"
+                      alt="profile photos"
+                    />
+                  )}
+                </div>
               </button>
-            </li>
-          </ul>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-56 glass-card backdrop-blur-xl border-white/10"
+            >
+              <DropdownMenuLabel className="text-foreground">
+                My Account
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem className="cursor-pointer hover:bg-white/5 focus:bg-white/5 text-foreground">
+                <UserCircle className="mr-2 h-4 w-4" />
+                <Link
+                  to={
+                    isAdmin
+                      ? "/manager/acccount-settings"
+                      : "/student/acccount-settings"
+                  }
+                >
+                  <span>My Account</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem className="cursor-pointer hover:bg-white/5 focus:bg-white/5 text-foreground">
+                <LogOut className="mr-2 h-4 w-4" />
+                <button type="button" onClick={handleLogout}>
+                  Logout
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

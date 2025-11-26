@@ -44,7 +44,17 @@ function SignInPage({ type = "manager" }) {
       if (type === "manager") {
         if (response.data.role === "manager") {
           secureLocalStorage.setItem(STORAGE_KEY, response.data);
-          navigate("/manager");
+
+          const id = toast.loading("Redirecting...");
+          setTimeout(() => {
+            toast.update(id, {
+              render: "Login Success!",
+              type: "success",
+              isLoading: false,
+              autoClose: 1000,
+            });
+            navigate("/manager");
+          }, 1000);
         } else {
           toast.error("Manager Account Not Found!", {
             position: "top-center",
@@ -61,7 +71,17 @@ function SignInPage({ type = "manager" }) {
       } else if (type === "student") {
         if (response.data.role === "student") {
           secureLocalStorage.setItem(STORAGE_KEY, response.data);
-          navigate("/student");
+
+          const id = toast.loading("Redirecting...");
+          setTimeout(() => {
+            toast.update(id, {
+              render: "Login Success!",
+              type: "success",
+              isLoading: false,
+              autoClose: 1000,
+            });
+            navigate("/student");
+          }, 1000);
         } else {
           toast.error("Student Account Not Found!", {
             position: "top-center",
@@ -94,7 +114,7 @@ function SignInPage({ type = "manager" }) {
 
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <div className="relative flex flex-col min-h-screen overflow-hidden bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225]">
+    <div className="relative flex flex-col min-h-screen overflow-hidden gradient-background">
       <div className="absolute -top-40 -left-40 h-96 w-96 bg-indigo-800/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 h-[500px] w-[500px] bg-violet-950-500/30 rounded-full blur-3xl pointer-events-none" />
       <nav className="flex items-center justify-between p-[30px]">

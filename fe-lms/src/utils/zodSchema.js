@@ -35,6 +35,14 @@ export const updateCourseSchema = createCourseSchema.partial({
   thumbnail: true,
 });
 
+export const createCategorySchema = z.object({
+  name: z.string().min(5),
+});
+
+export const updateCategorySchema = z.object({
+  name: z.string().min(5),
+});
+
 export const mutateContentSchema = z
   .object({
     title: z.string().min(5),
@@ -76,7 +84,7 @@ export const createStudentSchema = z.object({
 export const updateStudentSchema = z.object({
   name: z.string().min(5),
   email: z.string().email(),
-  password: z.string().optional(), // Simple: izinkan string apapun termasuk kosong
+  password: z.string().optional(),
   photo: z.any().optional(),
 });
 

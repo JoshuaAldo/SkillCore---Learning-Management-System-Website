@@ -12,9 +12,9 @@ export default function LayoutDashboard({ isAdmin = true }) {
       {isManagerPreviewPage !== null || isStudentPreviewPage !== null ? (
         <Outlet />
       ) : (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen gradient-background">
           <Sidebar isAdmin={isAdmin} />
-          <main className="flex flex-col flex-1 gap-[30px] p-[30px] ml-[290px]">
+          <main className="flex flex-col flex-1 ml-[300px]">
             <Header isAdmin={isAdmin} />
             <Outlet />
           </main>

@@ -37,7 +37,7 @@ export default function SignUpPage() {
   return (
     <>
       {mode === "AUTH" ? (
-        <div className="relative flex flex-col min-h-screen overflow-hidden bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225]">
+        <div className="relative flex flex-col min-h-screen overflow-hidden gradient-background">
           <div className="absolute -top-40 -left-40 h-96 w-96 bg-indigo-800/30 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 right-0 h-[500px] w-[500px] bg-violet-950-500/30 rounded-full blur-3xl pointer-events-none" />
           <div className="fixed w-full h-full bg-[#060A23] -z-10">
@@ -54,7 +54,7 @@ export default function SignUpPage() {
                 <div
                   className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
                     location.pathname.includes("/sign-in")
-                      ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                      ? "bg-[#420ecf] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
                       : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
                   }`}
                 >
@@ -63,10 +63,10 @@ export default function SignUpPage() {
               </Link>
               <Link to="#">
                 <div
-                  className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
+                  className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
                     location.pathname.includes("/sign-up")
-                      ? "bg-[#420ecf]  shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
-                      : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
+                      ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                      : "bg-[#070B24] shadow-[-10px_-6px_10px_0_#181A35_inset]"
                   }`}
                 >
                   <span className="font-semibold text-white">Sign Up</span>

@@ -6,11 +6,10 @@ import { ToastContainer, toast } from "react-toastify";
 const queryClient = new QueryClient();
 
 function App() {
-  const notify = () => toast("Wow so easy!");
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <ToastContainer />
+      <ToastContainer draggable />
     </QueryClientProvider>
   );
 }

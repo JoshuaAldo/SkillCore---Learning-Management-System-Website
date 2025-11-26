@@ -11,6 +11,9 @@ export const getCourseDetail = async (id, isPreview = false) =>
 export const getCategories = async () =>
   apiInstanceAuth.get("/categories").then((res) => res.data);
 
+export const getCategoryDetail = async (id) =>
+  apiInstanceAuth.get(`/categories/${id}`).then((res) => res.data);
+
 export const createCourse = async (data) =>
   apiInstanceAuth
     .post("/courses", data, {
@@ -30,7 +33,27 @@ export const updateCourse = async (data, id) =>
     .then((res) => res.data);
 
 export const deleteCourse = async (id) => {
-  apiInstanceAuth.delete(`/courses/${id}`).then((res) => res.data);
+  try {
+    const res = await apiInstanceAuth.delete(`/courses/${id}`);
+    return res.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+export const createCategory = async (data) =>
+  apiInstanceAuth.post("/categories", data).then((res) => res.data);
+
+export const updateCategory = async (data, id) =>
+  apiInstanceAuth.put(`/categories/${id}`, data).then((res) => res.data);
+
+export const deleteCategories = async (id) => {
+  try {
+    const res = await apiInstanceAuth.delete(`/categories/${id}`);
+    return res.data;
+  } catch (error) {
+    throw error.response || error;
+  }
 };
 
 export const createContentCourse = async (data) =>

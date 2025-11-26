@@ -15,7 +15,7 @@ export const getStudents = async (req, res) => {
         role: "student",
         manager: req.user._id,
       })
-      .select("name courses photo");
+      .select("name courses photo email");
 
     const imageURL = process.env.APP_URL + "/uploads/students/";
     const response = students.map((item) => {

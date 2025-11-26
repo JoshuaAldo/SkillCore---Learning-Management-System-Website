@@ -7,7 +7,7 @@ export default function Sidebar({ isAdmin = true }) {
 
   const getLinkClasses = (path) => {
     const baseClasses =
-      "flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset]";
+      "flex items-center gap-3 w-full rounded-lg border p-[10px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset]";
 
     const isActive =
       (path === "/manager" && currentPath === "/manager") ||
@@ -16,6 +16,12 @@ export default function Sidebar({ isAdmin = true }) {
         currentPath.startsWith("/manager/courses")) ||
       (path.startsWith("/manager/students") &&
         currentPath.startsWith("/manager/students")) ||
+      (path.startsWith("/manager/categories") &&
+        currentPath.startsWith("/manager/categories")) ||
+      (path.startsWith("/manager/acccount-settings") &&
+        currentPath.startsWith("/manager/acccount-settings")) ||
+      (path.startsWith("/student/acccount-settings") &&
+        currentPath.startsWith("/student/acccount-settings")) ||
       (path.startsWith("/student/detail-course") &&
         currentPath.startsWith("/student/detail-course"));
 
@@ -35,11 +41,13 @@ export default function Sidebar({ isAdmin = true }) {
   };
 
   return (
-    <aside className="sidebar-container fixed h-screen w-full max-w-[280px] bg-[#060A23] overflow-hidden flex flex-1 ]">
-      <div className="scroll-container flex w-full overflow-y-scroll hide-scrollbar">
+    <aside className="sidebar-container fixed h-screen w-full max-w-[280px] glass-card transition-all duration-300 backdrop-blur-xl overflow-hidden flex flex-1">
+      <div className="scroll-container flex w-full  hide-scrollbar">
         <nav className="flex flex-col w-full h-fit p-[30px] gap-10 z-10">
           <Link to="#">
-            <h1 className="text-white font-bold text-2xl">SkillCore</h1>
+            <h1 className="text-xl font-bold text-white bg-clip-text text-transparent">
+              SkillCore
+            </h1>
           </Link>
           <ul className="flex flex-col gap-4">
             <p className="font-semibold text-xs leading-[18px] text-white">
@@ -60,18 +68,15 @@ export default function Sidebar({ isAdmin = true }) {
               </li>
             ) : (
               <li>
-                {/* Assuming the student overview is /student */}
                 <Link to="/student">
                   <div className={getLinkClasses("/student")}>
                     {" "}
-                    {/* Use getLinkClasses for student overview */}
                     <img
                       src="/assets/images/icons/3dcube-white.svg"
                       className="w-6 h-6"
                       alt="icon"
                     />
                     <span className="font-semibold text-white">My Courses</span>{" "}
-                    {/* Or "Overview" */}
                   </div>
                 </Link>
               </li>
@@ -91,8 +96,8 @@ export default function Sidebar({ isAdmin = true }) {
                   </Link>
                 </li>
                 <li>
-                  <Link to="#">
-                    <div className="flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
+                  <Link to="/manager/categories">
+                    <div className={getLinkClasses("/manager/categories")}>
                       <img
                         src="/assets/images/icons/crown-white.svg"
                         className="w-6 h-6"
@@ -124,32 +129,20 @@ export default function Sidebar({ isAdmin = true }) {
               OTHERS
             </p>
             <li>
-              <Link to="#">
-                <div className="flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
-                  <img
-                    src="/assets/images/icons/security-card-white.svg"
-                    className="w-6 h-6"
-                    alt="icon"
-                  />
-                  <span className="font-semibold text-white">Subscription</span>
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link to="#">
-                <div className="flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
-                  <img
-                    src="/assets/images/icons/cup-white.svg"
-                    className="w-6 h-6"
-                    alt="icon"
-                  />
-                  <span className="font-semibold text-white">Rewards</span>
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link to="#">
-                <div className="flex items-center gap-3 w-full rounded-full border p-[14px_20px] transition-all duration-300 hover:bg-[#662FFF] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]">
+              <Link
+                to={
+                  isAdmin
+                    ? "/manager/acccount-settings"
+                    : "/student/acccount-settings"
+                }
+              >
+                <div
+                  className={
+                    isAdmin
+                      ? getLinkClasses("/manager/acccount-settings")
+                      : getLinkClasses("/student/acccount-settings")
+                  }
+                >
                   <img
                     src="/assets/images/icons/setting-2-white.svg"
                     className="w-6 h-6"
@@ -162,11 +155,6 @@ export default function Sidebar({ isAdmin = true }) {
           </ul>
         </nav>
       </div>
-      <img
-        src="/assets/images/backgrounds/sidebar-glow.png"
-        className="absolute object-contain object-bottom bottom-0"
-        alt="background"
-      />
     </aside>
   );
 }

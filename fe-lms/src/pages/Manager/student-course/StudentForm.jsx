@@ -11,6 +11,25 @@ import { addStudentCourseSchema } from "../../../utils/zodSchema";
 import { useMutation } from "@tanstack/react-query";
 import { addStudentsCourse } from "../../../services/courseService";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowLeft,
+  Upload,
+  UserPlus,
+  Search,
+  Mail,
+  User,
+  Trash2,
+  Edit,
+} from "lucide-react";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export default function StudentForm() {
   const data = useLoaderData();
@@ -19,6 +38,8 @@ export default function StudentForm() {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    watch,
   } = useForm({
     resolver: zodResolver(addStudentCourseSchema),
   });
@@ -34,7 +55,6 @@ export default function StudentForm() {
       const currentStudents = data?.course?.data?.students;
       const studentExists = currentStudents.includes(values.studentId);
       if (!studentExists) {
-        // Only run mutateAsync if the studentId does NOT exist
         await mutateAsync(values);
         toast.success("Student added successfully!", {
           position: "top-center",
@@ -58,8 +78,6 @@ export default function StudentForm() {
           progress: undefined,
           theme: "dark",
         });
-        // Optionally, you can show a user-friendly message here,
-        // e.g., using a toast notification or updating a state variable.
       }
     } catch (error) {
       console.log(error);
@@ -67,79 +85,111 @@ export default function StudentForm() {
   };
 
   return (
-    <>
-      <header className="flex items-center justify-between gap-[30px]">
+    <div className="p-6">
+      <div
+        id="Breadcrumb"
+        className="flex items-center mb-6 text-sm *:after:content-['/'] *:after:ml-2 *:after:mr-2"
+      >
+        <Link
+          to="/manager"
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Dashboard
+        </Link>
+        <Link
+          to="/manager/courses"
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Manage Course
+        </Link>
+        <Link
+          to={`/manager/courses/${id}`}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Details
+        </Link>
+        <Link
+          to={`/manager/courses/students/${id}`}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Students
+        </Link>
+        <span className="last-of-type:after:content-[''] text-foreground">
+          Add Student
+        </span>
+      </div>
+
+      <Link to={`/manager/courses/students/${id}`}>
+        <Button
+          variant="ghost"
+          className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Manage Students
+        </Button>
+      </Link>
+
+      <header className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="font-extrabold text-[28px] leading-[42px]">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
             Add Student
           </h1>
-          <p className="text-[#838C9D] mt-[1]">
-            Create new future htmlFor company
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="#"
-            className="w-fit rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
-          >
-            Import from BWA
-          </Link>
+          <p className="text-muted-foreground">Create new future for company</p>
         </div>
       </header>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col w-[550px] rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
-      >
-        <div className="flex flex-col gap-[10px]">
-          <label htmlFor="category" className="font-semibold">
-            Select Category
-          </label>
-          <div className="flex items-center w-full rounded-full border border-[#CFDBEF] gap-3 px-5 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#662FFF]">
-            <img
-              src="/assets/images/icons/bill-black.svg"
-              className="w-6 h-6"
-              alt="icon"
-            />
-            <select
-              {...register("studentId")}
-              id="studentId"
-              className="appearance-none outline-none w-full py-3 px-2 -mx-2 font-semibold placeholder:font-normal placeholder:text-[#838C9D] !bg-transparent"
-            >
-              <option value="" hidden>
-                Choose one student
-              </option>
-              {data?.students.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            <img
-              src="/assets/images/icons/arrow-down.svg"
-              className="w-6 h-6"
-              alt="icon"
-            />
-          </div>
-          <span className="error-message text-[#FF435A]">
-            {errors?.studentOd?.message}
-          </span>
+
+      <div className="max-w-2xl">
+        <div className="glass-card rounded-2xl p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-2 flex flex-col gap-[10px]">
+              <Label
+                htmlFor="studentId"
+                className="text-foreground font-medium"
+              >
+                Student Name
+              </Label>
+              <Select
+                onValueChange={(value) => setValue("studentId", value)}
+                defaultValue={watch("studentId")}
+              >
+                <SelectTrigger className="border-0 shadow-none h-auto flex-1 bg-background/50">
+                  <SelectValue placeholder="Choose one student" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {data?.students?.map((item) => (
+                    <SelectItem key={item._id} value={item._id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="error-message text-[#FF435A]">
+                {errors?.studentId?.message}
+              </span>
+            </div>
+
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate(`/manager/courses/students/${id}`)}
+                className="flex-1 h-12"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="gradient"
+                disabled={isLoading}
+                className="bg-[#420ecf] hover:hover:bg-indigo-600 shadow-[-10px_-6px_10px_0_#7F33FF_inset] text-sm rounded-lg flex-1 h-12"
+              >
+                Add Now
+              </Button>
+            </div>
+          </form>
         </div>
-        <div className="flex items-center gap-[14px]">
-          <button
-            type="button"
-            className="w-full rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
-          >
-            Save as Draft
-          </button>
-          <button
-            disabled={isLoading}
-            type="submit"
-            className="w-full rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
-          >
-            Add Now
-          </button>
-        </div>
-      </form>
-    </>
+      </div>
+    </div>
   );
 }

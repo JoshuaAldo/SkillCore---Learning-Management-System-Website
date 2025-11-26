@@ -13,10 +13,7 @@ export const getOverviews = async (req, res) => {
       manager: req.user._id,
     });
 
-    const totalStudents = courses.reduce(
-      (acc, curr) => acc + curr.students.length,
-      0
-    );
+    const totalStudents = await userModel.countDocuments({ role: "student" });
 
     const coursesVideo = await courseModel
       .find({

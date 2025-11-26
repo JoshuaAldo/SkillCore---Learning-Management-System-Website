@@ -2,128 +2,133 @@ import React from "react";
 import Students from "./Students";
 import Courses from "./Courses";
 import { useLoaderData } from "react-router-dom";
+import { Users, BookOpen, Play, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CardStat from "@/components/CardStat";
 
 function ManagerHome() {
-  const overview = useLoaderData();
+  const data = useLoaderData();
+  const activePercentage = data?.studentEngagement?.activePercentage;
+  const inactivePercentage = data?.studentEngagement?.inactivePercentage;
   return (
-    <>
-      <header className="flex items-center justify-between gap-[30px]">
+    <div className="p-6 space-y-8">
+      <header className="flex items-center justify-between">
         <div>
-          <h1 className="font-extrabold text-[28px] leading-[42px]">
+          <h1 className="font-extrabold text-[28px] leading-[42px] text-white">
             Overview
           </h1>
-          <p className="text-[#838C9D] mt-[1]">Grow your company quickly</p>
+          <p className="text-muted-foreground">Grow your company quickly</p>
         </div>
-        <div className="flex items-center gap-3">
-          <a
-            href="#"
-            className="w-fit rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="gradient"
+            className="bg-black rounded-lg hover:hover:bg-indigo-600 hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
           >
             Customize
-          </a>
-          <a
-            href=""
-            className="w-fit rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
+          </Button>
+          <Button
+            variant="gradient"
+            className="bg-[#420ecf] hover:hover:bg-indigo-600 shadow-[-10px_-6px_10px_0_#7F33FF_inset] text-sm rounded-lg"
           >
             Export Data
-          </a>
+          </Button>
         </div>
       </header>
-      <section
-        id="Stats"
-        className="flex rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
-      >
-        <div className="grid grid-cols-2 w-[500px] gap-[30px]">
-          <div className="flex flex-col rounded-[20px] p-5 gap-5 bg-white shadow-[0_4px_4px_0_#E0E2EF]">
-            <img
-              src="/assets/images/icons/profile-2user-purple.svg"
-              className="w-[46px] h-[46px]"
-              alt="icon"
-            />
-            <div>
-              <p className="font-extrabold text-2xl leading-[36px]">
-                {overview?.totalStudents}
-              </p>
-              <p className="text-[#838C9D]">Total Students</p>
-            </div>
-          </div>
-          <div className="flex flex-col rounded-[20px] p-5 gap-5 bg-white shadow-[0_4px_4px_0_#E0E2EF]">
-            <img
-              src="/assets/images/icons/note-favorite-purple.svg"
-              className="w-[46px] h-[46px]"
-              alt="icon"
-            />
-            <div>
-              <p className="font-extrabold text-2xl leading-[36px]">
-                {overview?.totalCourses}
-              </p>
-              <p className="text-[#838C9D]">Total Courses</p>
-            </div>
-          </div>
-          <div className="flex flex-col rounded-[20px] p-5 gap-5 bg-white shadow-[0_4px_4px_0_#E0E2EF]">
-            <img
-              src="/assets/images/icons/video-play-purple.svg"
-              className="w-[46px] h-[46px]"
-              alt="icon"
-            />
-            <div>
-              <p className="font-extrabold text-2xl leading-[36px]">
-                {overview?.totalVideos}
-              </p>
-              <p className="text-[#838C9D]">Video Content</p>
-            </div>
-          </div>
-          <div className="flex flex-col rounded-[20px] p-5 gap-5 bg-white shadow-[0_4px_4px_0_#E0E2EF]">
-            <img
-              src="/assets/images/icons/note-purple.svg"
-              className="w-[46px] h-[46px]"
-              alt="icon"
-            />
-            <div>
-              <p className="font-extrabold text-2xl leading-[36px]">
-                {overview?.totalCourseTexts}
-              </p>
-              <p className="text-[#838C9D]">Text Content</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col flex-1 rounded-[20px] p-5 gap-5 bg-white shadow-[0_4px_4px_0_#E0E2EF]">
-          <div className="relative flex items-center justify-center shrink-0 m-auto rounded-full w-[230px] h-[230px]">
-            <div
-              className="absolute rounded-full w-[230px] h-[230px] z-10"
-              style={{
-                background: "conic-gradient(#C2ACFF 0% 25%, #662FFF 25% 100%)",
-              }}
-            ></div>
-            <div className="flex justify-center items-center w-[130px] h-[130px] rounded-full bg-white z-10">
-              <p className="w-fit h-fit text-center font-bold text-lg leading-[27px]">
-                Our
-                <br />
-                Rapport
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-[10px]">
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full bg-[#662FFF]"></div>
-              <p className="font-semibold text-sm leading-[21px]">
-                Completed 75%
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full bg-[#C2ACFF]"></div>
-              <p className="font-semibold text-sm leading-[21px]">
-                Not Completed 25%
-              </p>
-            </div>
-          </div>
+
+      <section id="Stats" className="rounded-[30px] gap-[30px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <CardStat
+            label="Total Students"
+            value={data?.overviews?.totalStudents}
+            icon={Users}
+          />
+          <CardStat
+            label="Total Courses"
+            value={data?.overviews?.totalCourses}
+            icon={BookOpen}
+          />
+          <CardStat
+            label="Video Content"
+            value={data?.overviews?.totalVideos}
+            icon={Play}
+          />
+          <CardStat
+            label="Text Content"
+            value={data?.overviews?.totalCourseTexts}
+            icon={FileText}
+          />
         </div>
       </section>
-      <div className="grid grid-cols-2 gap-[30px]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1">
+          <div className="stat-card">
+            <div className="text-center space-y-6">
+              <div className="relative w-48 h-48 mx-auto">
+                <div className="w-full h-full rounded-full bg-gradient-primary p-1">
+                  <div className="w-full h-full rounded-full bg-card flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-foreground">
+                        Student
+                      </p>
+                      <p className="text-lg font-bold text-foreground">
+                        Engagement
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <svg
+                  className="absolute inset-0 w-full h-full -rotate-90"
+                  viewBox="0 0 100 100"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    fill="none"
+                    stroke="hsl(var(--muted))"
+                    strokeWidth="8"
+                    opacity="0.2"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    fill="none"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth="8"
+                    strokeDasharray={`${activePercentage * 2.51} 251`}
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-primary"></div>
+                    <span className="text-sm font-medium">
+                      Active Students {activePercentage}%
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-muted"></div>
+                    <span className="text-sm font-medium">
+                      Inactive Students {inactivePercentage}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <Courses />
         <Students />
       </div>
-    </>
+    </div>
   );
 }
 

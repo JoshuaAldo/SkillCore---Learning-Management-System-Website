@@ -1,39 +1,39 @@
 import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import CardCourse from "./CardCourse";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function ManageCoursePage() {
   const courses = useLoaderData();
 
   return (
-    <>
-      <header className="flex items-center justify-between gap-[30px]">
+    <div className="p-6">
+      <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h1 className="font-extrabold text-[28px] leading-[42px]">
+          <h1 className="font-extrabold text-[28px] leading-[42px] text-white">
             Manage Courses
           </h1>
-          <p className="text-[#838C9D] mt-[1]">
+          <p className="text-muted-foreground">
             Give the best future for your great employees
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            to="#"
-            className="w-fit rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
+          <Button
+            asChild
+            variant="gradient"
+            className="bg-[#420ecf] hover:bg-indigo-600 shadow-[-10px_-6px_10px_0_#7F33FF_inset] text-sm rounded-lg"
           >
-            Import File
-          </Link>
-          <Link
-            to="/manager/courses/create"
-            className="w-fit rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
-          >
-            New Course
-          </Link>
+            <Link to="/manager/courses/create">
+              <Plus className="w-4 h-4 mr-2" />
+              New Course
+            </Link>
+          </Button>
         </div>
       </header>
       <section
         id="CourseList"
-        className="flex flex-col w-full rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
         {courses?.data?.map((item) => (
           <CardCourse
@@ -45,39 +45,7 @@ export default function ManageCoursePage() {
             totalStudents={item.total_students + " Students"}
           />
         ))}
-        {/* <div id="Pagination" className="flex items-center gap-3">
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 bg-[#662FFF] text-white"
-          >
-            <span className="font-semibold text-sm leading-[21px]">1</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">2</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">3</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">4</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">5</span>
-          </button>
-        </div> */}
       </section>
-    </>
+    </div>
   );
 }

@@ -302,7 +302,7 @@ export const resetPasswordAction = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
     if (!token || !newPassword) {
-      return res.status(400).json({ error: "Invalid Request" });
+      return res.status(403).json({ error: "Invalid Request" });
     }
 
     const resetTokenHash = crypto
@@ -316,7 +316,7 @@ export const resetPasswordAction = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
+      return res.status(401).json({ message: "Invalid or expired token" });
     }
     user.password = bcrypt.hashSync(newPassword, 12);
     user.resetPasswordToken = undefined;
@@ -328,6 +328,6 @@ export const resetPasswordAction = async (req, res) => {
       role: user.role,
     });
   } catch (error) {
-    return res.status(400).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };

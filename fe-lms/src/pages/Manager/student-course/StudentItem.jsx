@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { useParams, useRevalidator } from "react-router-dom";
 import { deleteStudentsCourse } from "../../../services/courseService";
+import { Mail, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function StudentItem(props) {
   const revalidator = useRevalidator();
@@ -21,30 +23,36 @@ export default function StudentItem(props) {
     }
   };
   return (
-    <div className="card flex items-center gap-5">
-      <div className="relative flex shrink-0 w-20 h-20">
-        <div className="rounded-[20px] bg-[#D9D9D9] overflow-hidden">
-          <img
-            src={props.imageUrl}
-            className="w-full h-full object-cover"
-            alt="photo"
-          />
+    <div
+      key={props.id}
+      className="glass-card rounded-xl p-5 hover:bg-white/5 transition-all duration-300"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center">
+            <img src={props.imageUrl} alt="photo" />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-1">{props.name}</h3>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Mail className="w-4 h-4" />
+                {props.email}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="w-full">
-        <h3 className="font-bold text-xl leading-[30px] line-clamp-1">
-          {props.name}
-        </h3>
-      </div>
-      <div className="flex justify-end items-center gap-3">
-        <button
-          disabled={isLoading}
-          onClick={handleDelete}
-          type="button"
-          className="w-fit rounded-full p-[14px_20px] bg-[#FF435A] font-semibold text-white text-nowrap"
-        >
-          Delete
-        </button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-destructive"
+            onClick={() => handleDelete(props.id)}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

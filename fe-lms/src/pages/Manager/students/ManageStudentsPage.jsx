@@ -1,38 +1,38 @@
 import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import StudentItem from "./StudentItem";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function ManageStudentsPage() {
   const students = useLoaderData();
   return (
-    <>
-      <header className="flex items-center justify-between gap-[30px]">
+    <div className="p-6 space-y-6">
+      <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h1 className="font-extrabold text-[28px] leading-[42px]">
-            Manage Students
+          <h1 className="font-extrabold text-[28px] leading-[42px] text-white">
+            Students
           </h1>
-          <p className="text-[#838C9D] mt-[1]">
-            Keep your employee or student happy
+          <p className="text-muted-foreground mt-2">
+            Manage student accounts and track their progress
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            to="#"
-            className="w-fit rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
+          <Button
+            asChild
+            variant="gradient"
+            className="bg-[#420ecf] hover:bg-indigo-600 shadow-[-10px_-6px_10px_0_#7F33FF_inset] text-sm rounded-lg"
           >
-            Import File
-          </Link>
-          <Link
-            to={`/manager/students/create`}
-            className="w-fit rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
-          >
-            Add Student
-          </Link>
+            <Link to="/manager/students/create">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Student
+            </Link>
+          </Button>
         </div>
       </header>
       <section
-        id="CourseList"
-        className="flex flex-col w-full rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
+        id="StudentList"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {students?.map((item) => (
           <StudentItem
@@ -40,43 +40,11 @@ export default function ManageStudentsPage() {
             id={item._id}
             imageUrl={item.photo_url}
             name={item.name}
+            email={item.email}
             totalCourse={item.courses.length}
           />
         ))}
-
-        {/* <div id="Pagination" className="flex items-center gap-3">
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 bg-[#662FFF] text-white"
-          >
-            <span className="font-semibold text-sm leading-[21px]">1</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">2</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">3</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">4</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">5</span>
-          </button>
-        </div> */}
       </section>
-    </>
+    </div>
   );
 }

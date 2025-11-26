@@ -2,71 +2,57 @@ import React from "react";
 import { Link } from "react-router-dom";
 import ContentItem from "./ContentItem";
 import PropTypes from "prop-types";
+import { Plus, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function TableContent({ details, courseId }) {
+  console.log(details.length);
   return (
-    <>
-      <section
-        id="CourseList"
-        className="flex flex-col w-full rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
-      >
-        <div className="header flex items-center justify-between">
-          <h2 className="font-bold text-[22px] leading-[33px]">
-            Course Content
-          </h2>
-          <Link
-            to={`/manager/courses/${courseId}/create`}
-            className="w-fit rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
-          >
-            Add Content
-          </Link>
+    <div className="mt-8">
+      <section id="CourseList" className="glass-card rounded-2xl p-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Course Content
+            </h2>
+            <p className="text-muted-foreground">
+              Manage your course materials and lessons
+            </p>
+          </div>
+          <Button asChild variant="gradient">
+            <Link to={`/manager/courses/${courseId}/create`}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Content
+            </Link>
+          </Button>
         </div>
-        {details?.map((content, i) => (
-          <ContentItem
-            key={content._id}
-            type={content.type}
-            title={content.title}
-            id={content._id}
-            index={i + 1}
-            courseId={courseId}
-            imageUrl="/assets/images/thumbnails/cover-video.png"
-          />
-        ))}
-
-        {/* <div id="Pagination" className="flex items-center gap-3">
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 bg-[#662FFF] text-white"
-          >
-            <span className="font-semibold text-sm leading-[21px]">1</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">2</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">3</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">4</span>
-          </button>
-          <button
-            type="button"
-            className="flex shrink-0 w-9 h-9 rounded-full items-center justify-center text-center transition-all duration-300 hover:bg-[#662FFF] hover:text-white hover:border-0 border border-[#060A23]"
-          >
-            <span className="font-semibold text-sm leading-[21px]">5</span>
-          </button>
-        </div> */}
+        {details.length !== 0 ? (
+          details?.map((content, i) => (
+            <ContentItem
+              key={content._id}
+              type={content.type}
+              title={content.title}
+              id={content._id}
+              index={i + 1}
+              courseId={courseId}
+              imageUrl="/assets/images/thumbnails/cover-video.png"
+            />
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              No content yet
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              Start by adding your first lesson or material
+            </p>
+          </div>
+        )}
       </section>
-    </>
+    </div>
   );
 }
 

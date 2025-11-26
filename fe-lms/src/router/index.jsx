@@ -1,4 +1,9 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import {
+  createBrowserRouter,
+  redirect,
+  useRouteError,
+  useRouteLoaderData,
+} from "react-router-dom";
 import SignInPage from "../pages/SignIn/SignInPage";
 import SignUpPage from "../pages/SignUp/SignUpPage";
 import SuccessCheckoutPage from "../pages/SuccessCheckout/SuccessCheckoutPage";
@@ -16,6 +21,7 @@ import secureLocalStorage from "react-secure-storage";
 import { STORAGE_KEY, MANAGER_SESSION, STUDENT_SESSION } from "../utils/const";
 import {
   getCategories,
+  getCategoryDetail,
   getCourseDetail,
   getCourses,
   getDetailContentCourse,
@@ -29,9 +35,46 @@ import {
 } from "../services/studentService";
 import StudentCourseList from "../pages/Manager/student-course/StudentCourseList";
 import StudentForm from "../pages/Manager/student-course/StudentForm";
-import { getOverviews } from "../services/overviewService";
+import {
+  getOverviews,
+  getStudentEngagement,
+} from "../services/overviewService";
 import ForgotPasswordPage from "../pages/ForgotPassword/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
+import ManageCategoriesPage from "@/pages/Manager/categories/ManageCategoriesPage";
+import ManageCreateCategoriesPage from "@/pages/Manager/categories/ManageCreateCategoriesPage";
+import { getMe } from "@/services/userService";
+import ProfilePage from "@/pages/Profile/ProfilePage";
+
+function ErrorPage() {
+  const error = useRouteError();
+
+  const managerSession = useRouteLoaderData(MANAGER_SESSION);
+  const studentSession = useRouteLoaderData(STUDENT_SESSION);
+
+  if (error?.status === 401) {
+    if (managerSession) {
+      window.location.href = "/manager/sign-in";
+      return null;
+    }
+
+    if (studentSession) {
+      window.location.href = "/student/sign-in";
+      return null;
+    }
+
+    // fallback kalau tidak tahu role
+    window.location.href = "/";
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-xl font-bold">Oops, something went wrong 😢</h1>
+      <p>{error?.statusText || error?.message}</p>
+    </div>
+  );
+}
 
 const router = createBrowserRouter([
   {
@@ -71,6 +114,7 @@ const router = createBrowserRouter([
   {
     path: "/manager",
     id: MANAGER_SESSION,
+    errorElement: <ErrorPage />,
     loader: async () => {
       const session = secureLocalStorage.getItem(STORAGE_KEY);
 
@@ -86,8 +130,11 @@ const router = createBrowserRouter([
         index: true,
         loader: async () => {
           const overviews = await getOverviews();
-
-          return overviews?.data;
+          const studentEngagement = await getStudentEngagement();
+          return {
+            studentEngagement: studentEngagement?.data,
+            overviews: overviews?.data,
+          };
         },
         element: <ManagerHomePage />,
       },
@@ -147,6 +194,27 @@ const router = createBrowserRouter([
         element: <ManageCoursePreviewPage />,
       },
       {
+        path: "/manager/categories",
+        loader: async () => {
+          const data = await getCategories();
+          return data;
+        },
+        element: <ManageCategoriesPage />,
+      },
+      {
+        path: "/manager/categories/create",
+        element: <ManageCreateCategoriesPage />,
+      },
+      {
+        path: "/manager/categories/edit/:id",
+        loader: async ({ params }) => {
+          const categories = await getCategoryDetail(params.id);
+
+          return categories?.data;
+        },
+        element: <ManageCreateCategoriesPage />,
+      },
+      {
         path: "/manager/students",
         loader: async () => {
           const students = await getStudents();
@@ -186,11 +254,21 @@ const router = createBrowserRouter([
         },
         element: <StudentForm />,
       },
+      {
+        path: "/manager/acccount-settings",
+        loader: async () => {
+          const profile = await getMe();
+
+          return profile?.data;
+        },
+        element: <ProfilePage />,
+      },
     ],
   },
   {
     path: "/student",
     id: STUDENT_SESSION,
+    errorElement: <ErrorPage />,
     element: <LayoutDashboard isAdmin={false} />,
     loader: async () => {
       const session = secureLocalStorage.getItem(STORAGE_KEY);
@@ -220,6 +298,15 @@ const router = createBrowserRouter([
           return course?.data;
         },
         element: <ManageCoursePreviewPage isAdmin={false} />,
+      },
+      {
+        path: "/student/acccount-settings",
+        loader: async () => {
+          const profile = await getMe();
+
+          return profile?.data;
+        },
+        element: <ProfilePage />,
       },
     ],
   },

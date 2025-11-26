@@ -33,7 +33,8 @@ apiInstanceAuth.interceptors.response.use(
       secureLocalStorage.removeItem(STORAGE_KEY);
     }
 
-    return Promise.reject("Err");
+    return Promise.reject(err);
   }
 );
+
 export default apiInstance;

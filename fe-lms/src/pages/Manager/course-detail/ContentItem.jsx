@@ -2,6 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { Link, useRevalidator } from "react-router-dom";
 import { deleteDetailContentCourse } from "../../../services/courseService";
+import { BookOpen, Edit, FileText, Video, FileQuestion } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
 export default function ContentItem(props) {
   const revalidator = useRevalidator();
@@ -13,62 +16,70 @@ export default function ContentItem(props) {
     try {
       await mutateAsync();
       revalidator.revalidate();
+      toast.success(`Content "${props.title}" has been deleted successfully!`, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
+  const getContentIcon = (type) => {
+    switch (type) {
+      case "video":
+        return Video;
+      case "document":
+        return FileText;
+      case "quiz":
+        return FileQuestion;
+      default:
+        return BookOpen;
+    }
+  };
+  const ContentIcon = getContentIcon(props.type);
   return (
     <>
-      <div className="card flex items-center gap-5">
-        <div className="relative flex shrink-0 w-[140px] h-[110px] ">
-          <p className="absolute -top-[10px] -left-[10px] flex shrink-0 w-[30px] h-[30px] rounded-full items-center justify-center text-center bg-[#662FFF] text-white">
-            <span className="font-bold text-sm leading-[21px]">
+      <div className="glass-card rounded-2xl p-8 flex items-center m-4">
+        <div className="flex items-center gap-4 text-left w-full">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/20">
+            <span className="text-sm font-bold text-primary">
               {props.index}
             </span>
-          </p>
-          <div className="rounded-[20px] bg-[#D9D9D9] overflow-hidden">
-            <img
-              src={props.imageUrl}
-              className="w-full h-full object-cover"
-              alt="thumbnail"
-            />
           </div>
-        </div>
-        <div className="w-full">
-          <h3 className="font-bold text-xl leading-[30px] line-clamp-1">
-            {props.title}
-          </h3>
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-[6px] mt-[6px]">
-              <img
-                src={`/assets/images/icons/${
-                  props.type === "text"
-                    ? "note-favorite-purple.svg"
-                    : "video-play-purple.svg"
-                }`}
-                className="w-5 h-5"
-                alt="icon"
-              />
-              <p className="text-[#838C9D]">{props.type} Content</p>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <ContentIcon className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-foreground">{props.title}</h3>
             </div>
+            <p className="text-sm text-muted-foreground">
+              {props.type === "text" ? "Text" : "Video"} Content
+            </p>
           </div>
         </div>
         <div className="flex justify-end items-center gap-3">
-          <Link
-            to={`/manager/courses/${props.courseId}/edit/${props.id}`}
-            className="w-fit rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
-          >
-            Edit Content
-          </Link>
-          <button
+          <Button asChild variant="gradient" size="sm">
+            <Link to={`/manager/courses/${props.courseId}/edit/${props.id}`}>
+              <Edit className="w-4 h-4 mr-2" />
+              Edit Content
+            </Link>
+          </Button>
+
+          <Button
             type="button"
             disabled={isLoading}
             onClick={handleDelete}
-            className="w-fit rounded-full p-[14px_20px] bg-[#FF435A] font-semibold text-white text-nowrap"
+            size="sm"
+            className="bg-[#fd324a] hover:bg-[#7a0412]"
           >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
     </>

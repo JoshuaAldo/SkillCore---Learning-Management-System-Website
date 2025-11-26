@@ -14,6 +14,9 @@ import {
   postStudentToCourse,
   deleteStudentToCourse,
   postCategories,
+  updateCategories,
+  deleteCategories,
+  getCategoriesById,
 } from "../controllers/courseController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { fileFilter, fileStorageCourse } from "../utils/multer.js";
@@ -42,6 +45,17 @@ courseRoutes.post(
   validateRequest(mutateCategorySchema),
   postCategories
 );
+
+courseRoutes.put(
+  "/categories/:id",
+  verifyToken,
+  validateRequest(mutateCategorySchema),
+  updateCategories
+);
+
+courseRoutes.get("/categories/:id", verifyToken, getCategoriesById);
+
+courseRoutes.delete("/categories/:id", verifyToken, deleteCategories);
 
 courseRoutes.get("/courses/:id", verifyToken, getCourseById);
 

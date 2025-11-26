@@ -54,19 +54,34 @@ export const getCategories = async (req, res) => {
   }
 };
 
+export const getCategoriesById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const categories = await categoryModel.findById(id);
+
+    return res.json({
+      message: "Get Categories Detail success",
+      data: categories,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const postCategories = async (req, res) => {
   try {
     const { name } = req.body;
     let category = await categoryModel.findOne({ name: name });
 
     if (!name) {
-      return res.status(400).json({
+      return res.status(404).json({
         message: "Category name is required",
       });
     }
 
     if (category) {
-      return res.status(400).json({
+      return res.status(404).json({
         message: "Category name already exists",
       });
     }
@@ -90,11 +105,51 @@ export const updateCategories = async (req, res) => {
     const { id } = req.params;
     const { name, courses } = req.body;
 
-    const updatedCategory = await categoryModel.findByIdAndUpdate(
-      id,
-      { name, courses },
-      { new: true, runValidators: true } // return hasil terbaru + validasi
-    );
+    const updatedCategory = await categoryModel.findByIdAndUpdate(id, {
+      name,
+      courses,
+    });
+
+    if (!updatedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    return res.json({
+      message: "Category updated successfully",
+      data: updatedCategory,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed to update category",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteCategories = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedCategory = await categoryModel
+      .findById(id)
+      .populate("courses");
+    if (!deletedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    if (deletedCategory.courses.length > 0) {
+      return res.status(499).json({
+        message: `Category "${deletedCategory.name}" cannot be deleted because it still has ${deletedCategory.courses.length} course(s).`,
+      });
+    }
+
+    await categoryModel.findByIdAndDelete(id);
+
+    return res.json({
+      message: "Category deleted successfully",
+      data: deletedCategory,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -109,7 +164,7 @@ export const getCourseById = async (req, res) => {
       .findById(id)
       .populate({
         path: "category",
-        select: "name -_id",
+        select: "name _id",
       })
       .populate({
         path: "details",
@@ -151,7 +206,7 @@ export const postCourse = async (req, res) => {
     const category = await categoryModel.findById(parse.data.categoryId);
 
     if (!category) {
-      return res.status(400).json({
+      return res.status(404).json({
         message: "Category Id not found",
       });
     }
@@ -229,7 +284,7 @@ export const updateCourse = async (req, res) => {
       if (req?.file?.path && fs.existsSync(req?.file?.path)) {
         fs.unlinkSync(req?.file?.path);
       }
-      return res.status(400).json({
+      return res.status(404).json({
         message: "Category Id not found",
       });
     }
@@ -252,6 +307,15 @@ export const updateCourse = async (req, res) => {
       manager: req.user._id,
     });
 
+    if (oldCourse.category.toString() !== category._id.toString()) {
+      await categoryModel.findByIdAndUpdate(oldCourse.category, {
+        $pull: { courses: oldCourse._id },
+      });
+      await categoryModel.findByIdAndUpdate(category._id, {
+        $addToSet: { courses: oldCourse._id },
+      });
+    }
+
     return res.json({ message: "Updated Course successfully" });
   } catch (error) {
     console.log(error);
@@ -262,8 +326,18 @@ export const updateCourse = async (req, res) => {
 export const deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
-
     const course = await courseModel.findById(id);
+
+    if (course.details.length > 0) {
+      return res.status(403).json({
+        message: `Course "${course.name}" cannot be deleted because it still has ${course.details.length} content(s).`,
+      });
+    }
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
     const dirname = path.resolve();
     const filePath = path.join(
       dirname,
@@ -274,6 +348,19 @@ export const deleteCourse = async (req, res) => {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
+
+    if (course.category) {
+      await categoryModel.findByIdAndUpdate(course.category, {
+        $pull: { courses: course._id },
+      });
+    }
+
+    if (course.manager) {
+      await userModel.findByIdAndUpdate(course.manager, {
+        $pull: { courses: course._id },
+      });
+    }
+
     await courseModel.findByIdAndDelete(id);
 
     return res.json({ message: "Delete Course Success" });

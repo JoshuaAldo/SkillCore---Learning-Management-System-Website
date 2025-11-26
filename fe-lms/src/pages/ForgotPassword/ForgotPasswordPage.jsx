@@ -74,7 +74,7 @@ function ForgotPasswordPage({ type = "manager" }) {
   const location = useLocation();
   return (
     <div className="relative flex flex-col flex-1 h-screen">
-      <div className="fixed w-full h-full bg-gradient-to-br from-[#10131a] via-[#303b9c] to-[#110225] -z-10"></div>
+      <div className="fixed w-full h-full gradient-background -z-10"></div>
       <nav className="flex items-center justify-between p-[30px]">
         <Navbar />
         <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ function ForgotPasswordPage({ type = "manager" }) {
             <div
               className={`flex items-center gap-3 w-fit rounded-full border p-[10px_20px] transition-all duration-300 hover:bg-[#420ecf] hover:border-[#8661EE] hover:shadow-[-10px_-6px_10px_0_#7F33FF_inset] ${
                 location.pathname.includes("/sign-in")
-                  ? "bg-[#420ecf] hover:bg-indigo-600 border-[#8661EE] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
+                  ? "bg-[#420ecf] shadow-[-10px_-6px_10px_0_#7F33FF_inset]"
                   : "bg-[#070B24] border-[#24283E] shadow-[-10px_-6px_10px_0_#181A35_inset]"
               }`}
             >

@@ -2,9 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  data,
-  Link,
   useLoaderData,
+  useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -14,6 +13,20 @@ import {
 } from "../../../utils/zodSchema";
 import { useMutation } from "@tanstack/react-query";
 import { createCourse, updateCourse } from "../../../services/courseService";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Upload, X } from "lucide-react";
+import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "react-toastify";
+import { Label } from "@/components/ui/label";
 
 export default function ManageCreateCoursePage() {
   const data = useLoaderData();
@@ -30,13 +43,37 @@ export default function ManageCreateCoursePage() {
     defaultValues: {
       name: data?.course?.name,
       tagline: data?.course?.tagline,
-      categoryId: data?.course?.category,
+      categoryId: data?.course?.category?._id,
       description: data?.course?.description,
     },
   });
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const [file, setFile] = useState(null);
   const inputFileRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setValue("thumbnail", selectedFile, { shouldValidate: true });
+    }
+    e.target.value = "";
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      setFile(droppedFile);
+      setValue("thumbnail", droppedFile, { shouldValidate: true });
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
   const navigate = useNavigate();
 
@@ -63,6 +100,24 @@ export default function ManageCreateCoursePage() {
       } else {
         await mutateUpdate.mutateAsync(formData);
       }
+
+      toast.success(
+        `${
+          currentPath.includes("edit")
+            ? "Update Course Successfully!"
+            : "Course Added Successfully!"
+        }`,
+        {
+          position: "top-center",
+          autoClose: 3500,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
       navigate("/manager/courses");
     } catch (error) {
       console.log(error);
@@ -70,210 +125,205 @@ export default function ManageCreateCoursePage() {
   };
 
   return (
-    <>
-      <header className="flex items-center justify-between gap-[30px]">
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <header className="flex items-center gap-4 mb-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="hover:bg-accent"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
         <div>
-          <h1 className="font-extrabold text-[28px] leading-[42px]">
-            New Course
+          <h1 className="text-3xl font-bold text-foreground">
+            {currentPath.includes("edit") ? "Edit Course" : "Create New Course"}
           </h1>
-          <p className="text-[#838C9D] mt-[1]">
-            Create new future htmlFor company
+          <p className="text-muted-foreground">
+            {currentPath.includes("edit")
+              ? "Edit the course details"
+              : "Fill in the details to create a new course"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="#"
-            className="w-fit rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
-          >
-            Import from BWA
-          </Link>
-        </div>
       </header>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col w-[550px] rounded-[30px] p-[30px] gap-[30px] bg-[#F8FAFB]"
-      >
-        <div className="flex flex-col gap-[10px]">
-          <label htmlFor="title" className="font-semibold">
-            Course Name
-          </label>
-          <div className="flex items-center w-full rounded-full border border-[#CFDBEF] gap-3 px-5 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#662FFF]">
-            <img
-              src="/assets/images/icons/note-favorite-black.svg"
-              className="w-6 h-6"
-              alt="icon"
-            />
-            <input
-              {...register("name")}
-              type="text"
-              id="title"
-              className="appearance-none outline-none w-full py-3 font-semibold placeholder:font-normal placeholder:text-[#838C9D] !bg-transparent"
-              placeholder="Write better name for your course"
-            />
-          </div>
-          <span className="error-message text-[#FF435A]">
-            {errors?.name?.message}
-          </span>
-        </div>
-        <div className="relative flex flex-col gap-[10px]">
-          <label htmlFor="thumbnail" className="font-semibold">
-            Add Link Thumbnail
-          </label>
-          <div
-            id="thumbnail-preview-container"
-            className="relative flex shrink-0 w-full h-[200px] rounded-[20px] border border-[#CFDBEF] overflow-hidden"
+
+      <div className="glass-card p-6">
+        <Form>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6 w-[500px]"
           >
-            <button
-              type="button"
-              id="trigger-input"
-              className="absolute top-0 left-0 w-full h-full flex justify-center items-center gap-3 z-0"
-              onClick={() => inputFileRef?.current?.click()}
-            >
-              <img
-                src="/assets/images/icons/gallery-add-black.svg"
-                className={`w-6 h-6 ${file !== null ? "hidden" : "block"}`}
-                alt="icon"
+            <div className="flex flex-col gap-[10px]">
+              <Label htmlFor="title" className="text-foreground">
+                Course Name
+              </Label>
+              <Input
+                {...register("name")}
+                type="text"
+                id="title"
+                className="bg-background/50"
+                placeholder="e.g., Advanced React Development"
               />
-              <span
-                className={`text-[#838C9D] ${
-                  file !== null ? "hidden" : "block"
-                }`}
-              >
-                Add an attachment
+              <span className="error-message text-[#FF435A]">
+                {errors?.name?.message}
               </span>
-            </button>
-            <img
-              id="thumbnail-preview"
-              src={file !== null ? URL.createObjectURL(file) : ""}
-              className={`w-full h-full object-cover ${
-                file !== null ? "block" : "hidden"
-              }`}
-              alt="thumbnail"
-            />
-            <button
-              type="button"
-              id="delete-preview"
-              className="absolute right-[10px] bottom-[10px] w-12 h-12 rounded-full z-10 hidden"
-            >
-              <img src="/assets/images/icons/delete.svg" alt="delete" />
-            </button>
-          </div>
-          <input
-            {...register("thumbnail")}
-            ref={inputFileRef}
-            onChange={(e) => {
-              if (e.target.files) {
-                setFile(e.target.files[0]);
-                setValue("thumbnail", e.target.files[0]);
-              }
-            }}
-            type="file"
-            id="thumbnail"
-            accept="image/*"
-            className="absolute bottom-0 left-1/4 -z-10"
-          />
-          <span className="error-message text-[#FF435A]">
-            {errors?.thumbnail?.message}
-          </span>
-        </div>
-        <div className="flex flex-col gap-[10px]">
-          <label htmlFor="tagline" className="font-semibold">
-            Course Tagline
-          </label>
-          <div className="flex items-center w-full rounded-full border border-[#CFDBEF] gap-3 px-5 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#662FFF]">
-            <img
-              src="/assets/images/icons/bill-black.svg"
-              className="w-6 h-6"
-              alt="icon"
-            />
-            <input
-              {...register("tagline")}
-              type="text"
-              id="tagline"
-              className="appearance-none outline-none w-full py-3 font-semibold placeholder:font-normal placeholder:text-[#838C9D] !bg-transparent"
-              placeholder="Write tagline for better copy"
-            />
-          </div>
-          <span className="error-message text-[#FF435A]">
-            {errors?.tagline?.message}
-          </span>
-        </div>
-        <div className="flex flex-col gap-[10px]">
-          <label htmlFor="category" className="font-semibold">
-            Select Category
-          </label>
-          <div className="flex items-center w-full rounded-full border border-[#CFDBEF] gap-3 px-5 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#662FFF]">
-            <img
-              src="/assets/images/icons/bill-black.svg"
-              className="w-6 h-6"
-              alt="icon"
-            />
-            <select
-              {...register("categoryId")}
-              id="category"
-              className="appearance-none outline-none w-full py-3 px-2 -mx-2 font-semibold placeholder:font-normal placeholder:text-[#838C9D] !bg-transparent"
-            >
-              <option value="" hidden>
-                Choose one category
-              </option>
-              {data?.categories?.data?.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            <img
-              src="/assets/images/icons/arrow-down.svg"
-              className="w-6 h-6"
-              alt="icon"
-            />
-          </div>
-          <span className="error-message text-[#FF435A]">
-            {errors?.categoryId?.message}
-          </span>
-        </div>
-        <div className="flex flex-col gap-[10px]">
-          <label htmlFor="desc" className="font-semibold">
-            Description
-          </label>
-          <div className="flex w-full rounded-[20px] border border-[#CFDBEF] gap-3 p-5  transition-all duration-300 focus-within:ring-2 focus-within:ring-[#662FFF]">
-            <img
-              src="/assets/images/icons/note-black.png"
-              className="w-6 h-6"
-              alt="icon"
-            />
-            <textarea
-              {...register("description")}
-              id="desc"
-              rows="5"
-              className="appearance-none outline-none w-full font-semibold placeholder:font-normal placeholder:text-[#838C9D] !bg-transparent"
-              placeholder="Explain what this course about"
-            ></textarea>
-          </div>
-          <span className="error-message text-[#FF435A]">
-            {errors?.description?.message}
-          </span>
-        </div>
-        <div className="flex items-center gap-[14px]">
-          <button
-            type="button"
-            className="w-full rounded-full border border-[#060A23] p-[14px_20px] font-semibold text-nowrap"
-          >
-            Save as Draft
-          </button>
-          <button
-            type="submit"
-            disabled={
-              data?.course === null
-                ? mutateCreate.isLoading
-                : mutateUpdate.isLoading
-            }
-            className="w-full rounded-full p-[14px_20px] font-semibold text-[#FFFFFF] bg-[#662FFF] text-nowrap"
-          >
-            Create Now
-          </button>
-        </div>
-      </form>
-    </>
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="thumbnail" className="text-foreground">
+                Course Thumbnail
+              </Label>
+              <div
+                id="thumbnail-preview-container"
+                className="relative w-full h-48 rounded-lg overflow-hidden border border-border"
+              >
+                <button
+                  type="button"
+                  id="trigger-input"
+                  className="absolute top-0 left-0 w-full h-full flex justify-center items-center gap-3 z-0"
+                  onClick={() => inputFileRef?.current?.click()}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                >
+                  <label
+                    htmlFor="thumbnail-upload"
+                    className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg cursor-pointer ${
+                      file !== null ? "" : "bg-background/50"
+                    }  hover:bg-accent/50 transition-colors`}
+                  >
+                    <Upload
+                      className={`w-10 h-10 text-muted-foreground mb-2 ${
+                        file !== null ? "hidden" : "block"
+                      }`}
+                    />
+                    <p
+                      className={`text-sm text-muted-foreground ${
+                        file !== null ? "hidden" : "block"
+                      }`}
+                    >
+                      Click to upload or drag and drop
+                    </p>
+                    <p
+                      className={`text-xs text-muted-foreground ${
+                        file !== null ? "hidden" : "block"
+                      }`}
+                    >
+                      PNG, JPG up to 5MB
+                    </p>
+                  </label>
+                </button>
+                <img
+                  id="thumbnail-preview"
+                  src={file ? URL.createObjectURL(file) : ""}
+                  className={`w-full h-full object-cover ${
+                    file !== null ? "block" : "hidden"
+                  }`}
+                  alt="thumbnail"
+                />
+                <button
+                  type="button"
+                  id="delete-preview"
+                  className="absolute right-[10px] bottom-[10px] w-12 h-12 rounded-full z-10 hidden"
+                >
+                  <img src="/assets/images/icons/delete.svg" alt="delete" />
+                </button>
+              </div>
+              <input
+                ref={inputFileRef}
+                onChange={handleFileChange}
+                type="file"
+                id="thumbnail"
+                accept="image/*"
+                className="absolute bottom-0 left-1/4 -z-10 hidden"
+              />
+              <span className="error-message text-[#FF435A]">
+                {errors?.thumbnail?.message}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-[10px]">
+              <Label htmlFor="tagline" className="text-foreground">
+                Course Tagline
+              </Label>
+              <Input
+                {...register("tagline")}
+                type="text"
+                id="tagline"
+                className="bg-background/50"
+                placeholder="Write tagline for the course"
+              />
+              <span className="error-message text-[#FF435A]">
+                {errors?.tagline?.message}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-[10px]">
+              <Label htmlFor="category" className="text-foreground">
+                Select Category
+              </Label>
+              <Select
+                onValueChange={(val) =>
+                  setValue("categoryId", val, { shouldValidate: true })
+                }
+                defaultValue={data?.course?.category?._id || ""}
+              >
+                <SelectTrigger className="bg-background/50">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.categories?.data?.map((item) => (
+                    <SelectItem key={item._id} value={item._id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="error-message text-[#FF435A]">
+                {errors?.categoryId?.message}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-[10px]">
+              <Label htmlFor="desc" className="text-foreground">
+                Description
+              </Label>
+              <Textarea
+                {...register("description")}
+                id="desc"
+                rows="5"
+                className="min-h-[120px] bg-background/50 resize-none"
+                placeholder="Explain what this course about"
+              ></Textarea>
+              <span className="error-message text-[#FF435A]">
+                {errors?.description?.message}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate("/manager/courses")}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="gradient"
+                disabled={
+                  data?.course === null
+                    ? mutateCreate.isLoading
+                    : mutateUpdate.isLoading
+                }
+                className="bg-[#420ecf] hover:hover:bg-indigo-600 shadow-[-10px_-6px_10px_0_#7F33FF_inset] text-sm rounded-lg"
+              >
+                {currentPath.includes("edit")
+                  ? "Update Course"
+                  : "Create Course"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }
