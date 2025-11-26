@@ -34,31 +34,21 @@ export default function ManageCoursePreviewPage({ isAdmin = true }) {
         "w-full text-left p-4 rounded-xl transition-all duration-300";
       return `${baseClasses} ${
         isActive
-          ? "bg-primary/20 border border-primary/30" // Active styles
-          : "glass-card hover:bg-white/5" // Inactive styles
+          ? "bg-primary/20 border border-primary/30"
+          : "glass-card hover:bg-white/5"
       }`;
     } else if (type === "contentItem") {
       baseClasses =
         "flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0";
-      return `${baseClasses} ${
-        isActive
-          ? "bg-primary/30" // Active styles
-          : "bg-white/5" // Inactive styles
-      }`;
+      return `${baseClasses} ${isActive ? "bg-primary/30" : "bg-white/5"}`;
     } else if (type === "icon") {
       baseClasses = "w-4 h-4";
       return `${baseClasses} ${
-        isActive
-          ? "text-primary" // Active styles
-          : "text-muted-foreground" // Inactive styles
+        isActive ? "text-primary" : "text-muted-foreground"
       }`;
     } else if (type === "header") {
       baseClasses = "font-medium text-sm mb-1 line-clamp-2";
-      return `${baseClasses} ${
-        isActive
-          ? "text-primary" // Active styles
-          : "text-foreground" // Inactive styles
-      }`;
+      return `${baseClasses} ${isActive ? "text-primary" : "text-foreground"}`;
     }
   };
 

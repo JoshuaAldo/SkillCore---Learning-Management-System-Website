@@ -14,7 +14,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { createCourse, updateCourse } from "../../../services/courseService";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { ArrowLeft, Upload } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -220,13 +220,6 @@ export default function ManageCreateCoursePage() {
                   }`}
                   alt="thumbnail"
                 />
-                <button
-                  type="button"
-                  id="delete-preview"
-                  className="absolute right-[10px] bottom-[10px] w-12 h-12 rounded-full z-10 hidden"
-                >
-                  <img src="/assets/images/icons/delete.svg" alt="delete" />
-                </button>
               </div>
               <input
                 ref={inputFileRef}

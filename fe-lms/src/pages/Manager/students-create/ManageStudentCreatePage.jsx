@@ -1,12 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  Link,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import {
   createStudentSchema,
   updateStudentSchema,
@@ -17,7 +12,7 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, User, Mail, Lock, ImagePlus } from "lucide-react";
+import { ArrowLeft, User, Mail, Lock, ImagePlus, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ManageStudentCreatePage() {
@@ -166,11 +161,11 @@ export default function ManageStudentCreatePage() {
                       inputFileRef.current.value = "";
                     }
                   }}
-                  className={`w-12 h-12 rounded-full z-10 ${
+                  className={`bg-red-500 rounded-full h-12 w-12 z-10 flex items-center justify-center ${
                     file !== null ? "block" : "hidden"
                   }`}
                 >
-                  <img src="/assets/images/icons/delete.svg" alt="delete" />
+                  <Trash2 />
                 </button>
                 <div className={`${file !== null ? "hidden" : "block"}`}>
                   <Input

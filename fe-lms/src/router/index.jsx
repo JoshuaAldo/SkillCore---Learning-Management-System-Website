@@ -63,7 +63,6 @@ function ErrorPage() {
       return null;
     }
 
-    // fallback kalau tidak tahu role
     window.location.href = "/";
     return null;
   }

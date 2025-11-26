@@ -1,6 +1,6 @@
 import React from "react";
 import { useLoaderData } from "react-router-dom";
-import { Users } from "lucide-react";
+import { Users, BookOpen } from "lucide-react";
 
 export default function Students() {
   const data = useLoaderData();
@@ -29,7 +29,7 @@ export default function Students() {
                   {item.name}
                 </h3>
                 <div className="flex items-center gap-[6px] mt-[6px] text-sm">
-                  <img src="/assets/images/icons/crown-purple.svg" alt="icon" />
+                  <BookOpen size={16} color="#420ecf" />
                   <p className="text-[#838C9D]">
                     {item?.courses?.length} Course Joined
                   </p>

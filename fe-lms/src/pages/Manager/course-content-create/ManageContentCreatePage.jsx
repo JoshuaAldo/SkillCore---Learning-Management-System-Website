@@ -59,12 +59,12 @@ export default function ManageContentCreatePage() {
       if (content === undefined) {
         await mutateCreate.mutateAsync({
           ...values,
-          courseId: id, // pass the course id from the url
+          courseId: id,
         });
       } else {
         await mutateUpdate.mutateAsync({
           ...values,
-          courseId: id, // pass the course id from the url
+          courseId: id,
         });
       }
       toast.success(
@@ -253,10 +253,8 @@ export default function ManageContentCreatePage() {
                     "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
                 }}
                 initialValue={content?.text}
-                // Perubahan ada di sini:
                 onEditorChange={(content, editor) => {
-                  // Gunakan onEditorChange dan ambil 'content' sebagai argumen pertama
-                  setValue("text", content); // Langsung gunakan 'content' yang sudah diberikan
+                  setValue("text", content);
                 }}
               />
               <span className="error-message text-[#FF435A] text-sm">

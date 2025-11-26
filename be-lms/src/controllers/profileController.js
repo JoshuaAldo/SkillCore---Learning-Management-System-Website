@@ -3,7 +3,6 @@ import path from "path";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 
-// --- Get current logged-in user profile
 export const getMe = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -33,7 +32,6 @@ export const getMe = async (req, res) => {
   }
 };
 
-// --- Update name & email
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -45,7 +43,6 @@ export const updateProfile = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (email && email !== user.email) {
-      // optional: check uniqueness
       const existed = await userModel.findOne({ email });
       if (existed && existed._id.toString() !== userId) {
         return res.status(403).json({ message: "Email already in use" });
@@ -74,7 +71,6 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// --- Update photo (expects req.file from uploadProfile)
 export const updatePhoto = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -85,7 +81,6 @@ export const updatePhoto = async (req, res) => {
 
     if (!req.file) return res.status(401).json({ message: "No file uploaded" });
 
-    // remove previous file (optional: only if not default)
     try {
       if (user.photo && user.photo !== "default.png") {
         const prevPath = path.join(
@@ -118,7 +113,6 @@ export const updatePhoto = async (req, res) => {
   }
 };
 
-// --- Change password
 export const changePassword = async (req, res) => {
   try {
     const userId = req.user?._id;

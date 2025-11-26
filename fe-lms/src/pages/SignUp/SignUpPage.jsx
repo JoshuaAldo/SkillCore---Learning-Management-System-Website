@@ -40,13 +40,6 @@ export default function SignUpPage() {
         <div className="relative flex flex-col min-h-screen overflow-hidden gradient-background">
           <div className="absolute -top-40 -left-40 h-96 w-96 bg-indigo-800/30 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 right-0 h-[500px] w-[500px] bg-violet-950-500/30 rounded-full blur-3xl pointer-events-none" />
-          <div className="fixed w-full h-full bg-[#060A23] -z-10">
-            <img
-              src="/assets/images/backgrounds/background-glow.png"
-              className="absolute bottom-0 transform -translate-x-1/2 left-1/2"
-              alt=""
-            />
-          </div>
           <nav className="flex items-center justify-between p-[30px]">
             <Navbar />
             <div className="flex items-center gap-3">
